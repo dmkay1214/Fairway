@@ -131,7 +131,7 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
           }}>
             Enter as Buyer (Club) →
           </button>
-          <button onClick={() => onSignUp('buyer')} style={{
+          <button onClick={() => onSignUp('seller')} style={{
             padding: '14px 32px', borderRadius: 10,
             border: '1px solid rgba(255,255,255,.2)', background: 'transparent',
             color: 'white', fontSize: 15, cursor: 'pointer', fontFamily: 'var(--font-body)',
