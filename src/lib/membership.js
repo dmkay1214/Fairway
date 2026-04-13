@@ -87,7 +87,7 @@ export const VENDOR_PLANS = [
   {
     id: 'vendor_pro',
     name: 'Pro Vendor',
-    price: 1000,
+    price: 0,
     interval: 'month',
     description: 'For vendors serious about growing',
     color: '#1a8250',
