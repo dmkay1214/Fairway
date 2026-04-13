@@ -14,8 +14,6 @@ import { SellerOpportunities, SellerProfile } from './pages/SellerPages.jsx'
 import Settings from './pages/Settings.jsx'
 import Admin from './pages/Admin.jsx'
 import Pricing from './pages/Pricing.jsx'
-import { UsageBanner } from './components/MembershipGate.jsx'
-import { MOCK_MEMBERSHIP } from './lib/membership.js'
 
 function LoadingScreen() {
   return (
@@ -26,22 +24,66 @@ function LoadingScreen() {
   )
 }
 
-function AppShell({ role, setRole, user, onSignOut }) {
-  const [newRequestOpen, setNewRequestOpen] = useState(false)
-  const [showAdmin, setShowAdmin] = useState(false)
+function PaywallScreen({ user, onSignOut }) {
+  const [loading, setLoading] = useState(false)
+  async function handleCheckout() {
+    setLoading(true)
+    const { data, error } = await supabase.functions.invoke('create-checkout', {
+      body: { priceId: 'price_1TLoZpKSFMa1JWApWkk7Crnk', userId: user.id, email: user.email, planName: 'Pro Club' }
+    })
+    if (data?.url) window.location.href = data.url
+    else { alert('Error: ' + (error?.message || 'Unknown')); setLoading(false) }
+  }
+  return (
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <div style={{ marginBottom: 28, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 36, height: 36, borderRadius: 9, background: 'var(--green-500)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17 }}>⛳</div>
+        <span style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'white' }}>Fairway</span>
+      </div>
+      <div style={{ width: '100%', maxWidth: 480, background: '#141414', borderRadius: 20, padding: '36px', border: '1px solid #222', textAlign: 'center' }}>
+        <div style={{ fontSize: 40, marginBottom: 16 }}>🏌️</div>
+        <div style={{ fontSize: 22, fontFamily: 'var(--font-display)', color: 'white', marginBottom: 8 }}>Welcome to Fairway</div>
+        <div style={{ fontSize: 14, color: '#666', marginBottom: 28, lineHeight: 1.7 }}>
+          Access to the Club Portal requires an active Pro Club subscription.<br />Start saving 18–35% on your course procurement today.
+        </div>
+        <div style={{ background: '#0d2318', border: '1.5px solid var(--green-500)', borderRadius: 14, padding: '20px 24px', marginBottom: 24, textAlign: 'left' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'white' }}>Pro Club</div>
+              <div style={{ fontSize: 12, color: 'var(--green-600)', marginTop: 2 }}>Full platform access</div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: 24, fontWeight: 700, color: 'white' }}>$1,000</div>
+              <div style={{ fontSize: 11, color: '#555' }}>/month</div>
+            </div>
+          </div>
+          {['Unlimited procurement requests', 'Competing bids from verified vendors', 'Full savings & analytics reporting', 'Complete vendor directory access', 'Priority support'].map(f => (
+            <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7 }}>
+              <span style={{ color: 'var(--green-400)', fontSize: 12 }}>✓</span>
+              <span style={{ fontSize: 13, color: '#aaa' }}>{f}</span>
+            </div>
+          ))}
+        </div>
+        <button onClick={handleCheckout} disabled={loading} style={{ width: '100%', padding: '14px', borderRadius: 12, border: 'none', background: loading ? '#333' : 'var(--green-600)', color: 'white', fontSize: 15, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-body)', marginBottom: 12 }}>
+          {loading ? 'Redirecting to checkout...' : 'Subscribe — $1,000/month →'}
+        </button>
+        <div style={{ fontSize: 11, color: '#444', marginBottom: 16 }}>Cancel anytime. Billed monthly via Stripe.</div>
+        <button onClick={onSignOut} style={{ background: 'none', border: 'none', color: '#555', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>Sign out</button>
+      </div>
+    </div>
+  )
+}
 
+function AppShell({ role, user, onSignOut }) {
+  const [newRequestOpen, setNewRequestOpen] = useState(false)
   const userName = user?.user_metadata?.full_name || 'User'
   const orgName = user?.user_metadata?.org_name || (role === 'buyer' ? 'My Club' : 'My Company')
-
-  if (showAdmin) return <Admin onExit={() => setShowAdmin(false)} />
-
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <Sidebar role={role} onRoleToggle={setRole} />
+      <Sidebar role={role} onRoleToggle={() => {}} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <TopBar role={role} onNewRequest={() => setNewRequestOpen(true)} onAdmin={() => setShowAdmin(true)} userName={userName} orgName={orgName} />
+        <TopBar role={role} onNewRequest={() => setNewRequestOpen(true)} userName={userName} orgName={orgName} onSignOut={onSignOut} />
         <main style={{ flex: 1, overflowY: 'auto', padding: '28px 32px' }}>
-          <UsageBanner membership={MOCK_MEMBERSHIP[role]} role={role} />
           <Routes>
             <Route path="/dashboard" element={<Dashboard onNewRequest={() => setNewRequestOpen(true)} />} />
             <Route path="/requests" element={<Requests onNewRequest={() => setNewRequestOpen(true)} />} />
@@ -50,7 +92,7 @@ function AppShell({ role, setRole, user, onSignOut }) {
             <Route path="/savings" element={<Savings />} />
             <Route path="/vendors" element={<Vendors />} />
             <Route path="/settings" element={<Settings role={role} />} />
-            <Route path="/pricing" element={<Pricing role={role} currentPlanId={MOCK_MEMBERSHIP[role]?.planId} />} />
+            <Route path="/pricing" element={<Pricing role={role} userId={user?.id} userEmail={user?.email} />} />
             <Route path="/seller" element={<SellerOpportunities />} />
             <Route path="/seller/bids" element={<SellerOpportunities />} />
             <Route path="/seller/orders" element={<Orders />} />
@@ -69,30 +111,25 @@ export default function App() {
   const [role, setRole] = useState('buyer')
   const [user, setUser] = useState(null)
 
+  async function checkAccess(sessionUser) {
+    const userRole = sessionUser?.user_metadata?.role || 'buyer'
+    setRole(userRole)
+    setUser(sessionUser)
+    if (userRole === 'seller') { setScreen('app'); return }
+    const { data } = await supabase.from('memberships').select('plan_id, status').eq('user_id', sessionUser.id).single()
+    const isPaid = data?.plan_id === 'buyer_pro' && data?.status === 'active'
+    setScreen(isPaid ? 'app' : 'paywall')
+  }
+
   useEffect(() => {
-    // Check for existing session on load
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        setUser(data.session.user)
-        setRole(data.session.user?.user_metadata?.role || 'buyer')
-        setScreen('app')
-      } else {
-        setScreen('landing')
-      }
+      if (data.session) checkAccess(data.session.user)
+      else setScreen('landing')
     })
-
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setUser(session.user)
-        setRole(session.user?.user_metadata?.role || 'buyer')
-        setScreen('app')
-      } else {
-        setUser(null)
-        setScreen('landing')
-      }
+      if (session) checkAccess(session.user)
+      else { setUser(null); setScreen('landing') }
     })
-
     return () => subscription.unsubscribe()
   }, [])
 
@@ -106,13 +143,14 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      {screen === 'landing' && <Landing onEnter={(r) => { setRole(r); setScreen('app') }} onLogin={() => setScreen('login')} onSignUp={() => setScreen('signup')} />}
-      {screen === 'login' && <Login onLogin={(r, u) => { setRole(r); setUser(u); setScreen('app') }} onSignUp={() => setScreen('signup')} onForgot={() => setScreen('forgot')} />}
-      {screen === 'signup' && <SignUp onSignUp={(r, u) => { setRole(r); setUser(u); setScreen('app') }} onLogin={() => setScreen('login')} />}
+      {screen === 'landing' && <Landing onEnter={() => {}} onLogin={() => setScreen('login')} onSignUp={() => setScreen('signup')} />}
+      {screen === 'login' && <Login onLogin={(r, u) => checkAccess(u)} onSignUp={() => setScreen('signup')} onForgot={() => setScreen('forgot')} />}
+      {screen === 'signup' && <SignUp onSignUp={(r, u) => checkAccess(u)} onLogin={() => setScreen('login')} />}
       {screen === 'forgot' && <ForgotPassword onBack={() => setScreen('login')} />}
+      {screen === 'paywall' && <PaywallScreen user={user} onSignOut={handleSignOut} />}
       {screen === 'app' && (
         <Routes>
-          <Route path="/*" element={<AppShell role={role} setRole={setRole} user={user} onSignOut={handleSignOut} />} />
+          <Route path="/*" element={<AppShell role={role} user={user} onSignOut={handleSignOut} />} />
         </Routes>
       )}
     </BrowserRouter>
