@@ -54,7 +54,7 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
             </div>
           ))}
           <button
-            onClick={() => onEnter('buyer')}
+            onClick={() => onSignUp()}
             style={{
               width: '100%', padding: '12px', borderRadius: 10, border: 'none',
               background: 'var(--green-600)', color: 'white', fontSize: 14, fontWeight: 600,
@@ -124,14 +124,14 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
           Fairway is the procurement marketplace where golf courses and country clubs source sand, machinery, labor, and supplies — at prices your current vendors can't match.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button onClick={() => onEnter('buyer')} style={{
+          <button onClick={() => onSignUp()} style={{
             padding: '14px 32px', borderRadius: 10, border: 'none',
             background: 'var(--green-500)', color: 'white', fontSize: 15, fontWeight: 600,
             cursor: 'pointer', fontFamily: 'var(--font-body)',
           }}>
             Enter as Buyer (Club) →
           </button>
-          <button onClick={() => onEnter('seller')} style={{
+          <button onClick={() => onSignUp()} style={{
             padding: '14px 32px', borderRadius: 10,
             border: '1px solid rgba(255,255,255,.2)', background: 'transparent',
             color: 'white', fontSize: 15, cursor: 'pointer', fontFamily: 'var(--font-body)',
