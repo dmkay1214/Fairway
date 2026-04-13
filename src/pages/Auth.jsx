@@ -98,6 +98,7 @@ export function Login({ onLogin, onSignUp, onForgot }) {
 
 export function SignUp({ onSignUp, onLogin, initialRole = 'buyer' }) {
   const [roleTab, setRoleTab] = useState(initialRole)
+  React.useEffect(() => { setRoleTab(initialRole) }, [initialRole])
   const [step, setStep] = useState(1)
   const [form, setForm] = useState({ fullName: '', email: '', password: '', confirmPassword: '', orgName: '', location: '', categories: [] })
   const [loading, setLoading] = useState(false)
