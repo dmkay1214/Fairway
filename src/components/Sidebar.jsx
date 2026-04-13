@@ -1,5 +1,7 @@
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase.js'
 
 const buyerNav = [
   { path: '/dashboard', label: 'Dashboard', icon: GridIcon },
@@ -23,6 +25,18 @@ export default function Sidebar({ role, onRoleToggle }) {
   const location = useLocation()
   const navigate = useNavigate()
   const nav = role === 'buyer' ? buyerNav : sellerNav
+  const [counts, setCounts] = useState({})
+  useEffect(() => {
+    supabase.auth.getUser().then(({data:{user}}) => {
+      if (user) {
+        supabase.from('requests').select('id, bids(count)').eq('buyer_id', user.id).eq('status','bidding').then(({data}) => {
+          const r = data?.length || 0
+          const b = data?.reduce((s,x) => s+(x.bids?.[0]?.count||0),0) || 0
+          setCounts({requests: r||null, bids: b||null})
+        })
+      }
+    })
+  }, [role])
 
   return (
     <div style={{
@@ -92,15 +106,15 @@ export default function Sidebar({ role, onRoleToggle }) {
             >
               <Icon active={active} />
               <span style={{ flex: 1 }}>{item.label}</span>
-              {item.badge && (
+              {(item.badgeKey ? counts[item.badgeKey] : item.badge) ? (
                 <span style={{
                   background: active ? 'rgba(255,255,255,.25)' : 'var(--green-600)',
                   color: 'white', fontSize: 10, fontWeight: 600,
                   padding: '1px 6px', borderRadius: 'var(--radius-full)',
                 }}>
-                  {item.badge}
+                  {item.badgeKey ? counts[item.badgeKey] : item.badge}
                 </span>
-              )}
+              ) : null}
             </button>
           )
         })}
