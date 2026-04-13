@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { supabase } from '../lib/supabase.js'
 import NotificationBell from './Notifications.jsx'
 
 export default function TopBar({ role, onNewRequest, onAdmin, userName, orgName }) {
@@ -104,7 +105,7 @@ export default function TopBar({ role, onNewRequest, onAdmin, userName, orgName 
                 >{item.label}</button>
               ))}
               <div style={{ borderTop: '1px solid var(--slate-50)', marginTop: 4, paddingTop: 4 }}>
-                <button onClick={() => {}} style={{
+                <button onClick={async () => { await supabase.auth.signOut(); window.location.href = "/"; }} style={{
                   display: 'block', width: '100%', padding: '8px 12px',
                   border: 'none', background: 'none', textAlign: 'left',
                   fontSize: 13, color: '#ef4444', cursor: 'pointer',
