@@ -56,32 +56,6 @@ export const BUYER_PLANS = [
       'Dedicated account manager',
     ],
   },
-  {
-    id: 'buyer_enterprise',
-    name: 'Enterprise',
-    price: 1000,
-    interval: 'month',
-    description: 'For management companies & multi-course operators',
-    color: '#1f6feb',
-    stripePriceId: 'price_1TLoccKSFMa1JWAp9wUEJ3yS',
-    limits: {
-      requestsPerMonth: Infinity,
-      savingsReport: true,
-      multiCourse: true,
-      prioritySupport: true,
-      vendorFilters: true,
-    },
-    features: [
-      'Everything in Pro Club',
-      'Up to 10 courses under one account',
-      'Consolidated savings reporting',
-      'Dedicated account manager',
-      'Custom vendor contracts',
-      'API access',
-      'SLA guarantee',
-    ],
-    missing: [],
-  },
 ]
 
 export const VENDOR_PLANS = [
