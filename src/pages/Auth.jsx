@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { signIn, signUp, resetPassword } from '../lib/supabase.js'
 
 const inputStyle = {
@@ -97,8 +97,8 @@ export function Login({ onLogin, onSignUp, onForgot }) {
 }
 
 export function SignUp({ onSignUp, onLogin, initialRole = 'buyer' }) {
-  const [roleTab, setRoleTab] = useState(() => sessionStorage.getItem('signup_role') || initialRole)
-  React.useEffect(() => { sessionStorage.removeItem('signup_role') }, [])
+  const urlRole = new URLSearchParams(window.location.search).get('role')
+  const [roleTab, setRoleTab] = useState(urlRole || initialRole)
   React.useEffect(() => { setRoleTab(initialRole) }, [initialRole])
   const [step, setStep] = useState(1)
   const [form, setForm] = useState({ fullName: '', email: '', password: '', confirmPassword: '', orgName: '', location: '', categories: [] })
