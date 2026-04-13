@@ -110,6 +110,7 @@ export default function App() {
   const [screen, setScreen] = useState('loading')
   const [role, setRole] = useState('buyer')
   const [user, setUser] = useState(null)
+  const [signupRole, setSignupRole] = useState('buyer')
 
   async function checkAccess(sessionUser) {
     const userRole = sessionUser?.user_metadata?.role || 'buyer'
@@ -143,9 +144,9 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      {screen === 'landing' && <Landing onEnter={() => {}} onLogin={() => setScreen('login')} onSignUp={() => setScreen('signup')} />}
+      {screen === 'landing' && <Landing onEnter={() => {}} onLogin={() => setScreen('login')} onSignUp={(r) => { setSignupRole(r); setScreen('signup') }} />}
       {screen === 'login' && <Login onLogin={(r, u) => checkAccess(u)} onSignUp={() => setScreen('signup')} onForgot={() => setScreen('forgot')} />}
-      {screen === 'signup' && <SignUp onSignUp={(r, u) => checkAccess(u)} onLogin={() => setScreen('login')} />}
+      {screen === 'signup' && <SignUp initialRole={signupRole} onSignUp={(r, u) => checkAccess(u)} onLogin={() => setScreen('login')} />}
       {screen === 'forgot' && <ForgotPassword onBack={() => setScreen('login')} />}
       {screen === 'paywall' && <PaywallScreen user={user} onSignOut={handleSignOut} />}
       {screen === 'app' && (
