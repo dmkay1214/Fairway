@@ -60,12 +60,10 @@ export default function Sidebar({ role, onRoleToggle }) {
         </div>
       </div>
       <div style={{ padding: '12px 12px 4px' }}>
-        <div style={{ display: 'flex', background: 'rgba(255,255,255,.06)', borderRadius: 'var(--radius-md)', padding: 3, gap: 2 }}>
-          {['buyer', 'seller'].map(r => (
-            <button key={r} onClick={() => onRoleToggle(r)} style={{ flex: 1, padding: '6px 0', fontSize: 12, fontWeight: 500, borderRadius: 7, border: 'none', cursor: 'pointer', background: role === r ? 'white' : 'transparent', color: role === r ? 'var(--slate-900)' : 'rgba(255,255,255,.45)', transition: 'all .2s', fontFamily: 'var(--font-body)' }}>
-              {r === 'buyer' ? '🏌️ Buyer' : '🏢 Seller'}
-            </button>
-          ))}
+        <div style={{ background: 'rgba(255,255,255,.06)', borderRadius: 'var(--radius-md)', padding: '8px 12px', textAlign: 'center' }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: 'white' }}>
+            {role === 'buyer' ? '🏌️ Club Portal' : '🏢 Vendor Portal'}
+          </span>
         </div>
       </div>
       <nav style={{ flex: 1, padding: '8px 8px', overflowY: 'auto' }}>
