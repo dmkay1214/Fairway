@@ -97,8 +97,7 @@ export function Login({ onLogin, onSignUp, onForgot }) {
 }
 
 export function SignUp({ onSignUp, onLogin, initialRole = 'buyer' }) {
-  const urlRole = new URLSearchParams(window.location.search).get('role')
-  const [roleTab, setRoleTab] = useState(urlRole || initialRole)
+  const [roleTab, setRoleTab] = useState(window.__signupRole || initialRole)
   React.useEffect(() => { setRoleTab(initialRole) }, [initialRole])
   const [step, setStep] = useState(1)
   const [form, setForm] = useState({ fullName: '', email: '', password: '', confirmPassword: '', orgName: '', location: '', categories: [] })
