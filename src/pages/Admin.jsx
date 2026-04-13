@@ -295,7 +295,7 @@ export default function Admin({ onExit }) {
               background: 'var(--green-50)', border: '1px solid var(--green-200)',
               borderRadius: 8, padding: '6px 12px', fontSize: 12, color: 'var(--green-700)', fontWeight: 500,
             }}>
-              3% platform fee active
+              1% platform fee active
             </div>
           )}
         />

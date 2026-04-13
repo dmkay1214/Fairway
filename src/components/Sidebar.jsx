@@ -9,6 +9,7 @@ const buyerNav = [
   { path: '/savings', label: 'Savings Report', icon: TrendIcon },
   { path: '/vendors', label: 'Vendor Directory', icon: UsersIcon },
   { path: '/settings', label: 'Settings', icon: GearIcon },
+  { path: '/pricing', label: 'Upgrade plan', icon: StarIcon },
 ]
 
 const sellerNav = [

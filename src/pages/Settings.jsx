@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Card, PageHeader, Btn, Badge } from '../components/UI.jsx'
+import { getPlan, MOCK_MEMBERSHIP } from '../lib/membership.js'
+import Pricing from './Pricing.jsx'
 
 function Section({ title, children }) {
   return (
@@ -49,10 +51,18 @@ function Toggle({ value, onChange }) {
 export default function Settings({ role }) {
   const [notifs, setNotifs] = useState({ newBid: true, closing: true, awarded: true, marketing: false })
   const [saved, setSaved] = useState(false)
+  const [showPricing, setShowPricing] = useState(false)
+
+  const membership = MOCK_MEMBERSHIP[role] || MOCK_MEMBERSHIP.buyer
+  const plan = getPlan(membership.planId, role)
 
   function handleSave() {
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
+  }
+
+  if (showPricing) {
+    return <Pricing role={role} currentPlanId={membership.planId} onClose={() => setShowPricing(false)} />
   }
 
   return (
@@ -97,19 +107,49 @@ export default function Settings({ role }) {
         <Btn variant="primary" size="sm" onClick={handleSave}>{saved ? '✓ Saved' : 'Save preferences'}</Btn>
       </Section>
 
-      {/* Billing */}
-      <Section title="Billing & Plan">
-        <SettingRow label="Current plan" description="All features included, no monthly fee">
-          <Badge variant="success">Free — 3% per transaction</Badge>
-        </SettingRow>
-        <SettingRow label="Payment method" description="Used for vendor payouts and order processing">
+      {/* Plan */}
+      <Section title="Plan & Billing">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '4px 0 20px', borderBottom: '1px solid var(--slate-50)', marginBottom: 16 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+              <div style={{ fontSize: 16, fontWeight: 700 }}>{plan.name}</div>
+              <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 20, background: plan.price > 0 ? '#dcfce7' : 'var(--slate-100)', color: plan.price > 0 ? '#166534' : 'var(--slate-500)' }}>
+                {plan.price > 0 ? 'Active' : 'Free'}
+              </span>
+            </div>
+            <div style={{ fontSize: 13, color: 'var(--slate-500)' }}>
+              {plan.price === 0 ? 'Free plan · Upgrade to unlock more features' : `$${plan.price}/month · Renews monthly`}
+            </div>
+          </div>
+          <Btn variant="primary" size="sm" onClick={() => setShowPricing(true)}>
+            {plan.price === 0 ? 'Upgrade plan' : 'Manage plan'}
+          </Btn>
+        </div>
+
+        {plan.price === 0 && role === 'buyer' && (
+          <div style={{ background: 'var(--green-50)', border: '1px solid #bbf7d0', borderRadius: 10, padding: '14px 16px', marginBottom: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--green-800)', marginBottom: 4 }}>
+              You have used {membership.requestsUsedThisMonth} of 3 free requests this month
+            </div>
+            <div style={{ height: 6, background: '#bbf7d0', borderRadius: 3, overflow: 'hidden', marginBottom: 8 }}>
+              <div style={{ height: '100%', background: 'var(--green-600)', borderRadius: 3, width: `${(membership.requestsUsedThisMonth / 3) * 100}%` }} />
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--green-700)' }}>Upgrade to Pro Club for unlimited requests</div>
+          </div>
+        )}
+
+        <SettingRow label="Payment method" description="Used for subscription billing">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ fontSize: 13, color: 'var(--slate-600)' }}>Visa ending 4242</div>
-            <Btn size="sm">Update</Btn>
+            {plan.price > 0 ? (
+              <div style={{ fontSize: 13, color: 'var(--slate-600)' }}>Visa ending 4242</div>
+            ) : (
+              <div style={{ fontSize: 13, color: 'var(--slate-400)' }}>No card on file</div>
+            )}
+            <Btn size="sm" onClick={() => setShowPricing(true)}>{plan.price > 0 ? 'Update' : 'Add card'}</Btn>
           </div>
         </SettingRow>
         <SettingRow label="Invoices" description="Download past invoices and receipts">
-          <Btn size="sm">View invoices →</Btn>
+          <Btn size="sm" onClick={() => {}}>View invoices →</Btn>
         </SettingRow>
       </Section>
 

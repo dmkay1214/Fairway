@@ -25,7 +25,7 @@ export function getStripe() {
 
 // ─── Frontend: redirect to Stripe checkout ────────────────────
 export async function initiatePayment({ orderId, amount, vendorStripeAccountId }) {
-  const platformFeePct = Number(import.meta.env.VITE_PLATFORM_FEE_PCT || 3)
+  const platformFeePct = Number(import.meta.env.VITE_PLATFORM_FEE_PCT || 1)
   const platformFee = Math.round(amount * platformFeePct / 100 * 100) // in cents
 
   // Call your backend/edge function to create a PaymentIntent

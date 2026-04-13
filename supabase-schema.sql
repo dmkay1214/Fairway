@@ -221,3 +221,41 @@ create index idx_reviews_vendor    on public.reviews(vendor_id);
 -- 2. Run: npm run dev
 -- 3. Sign up as a buyer or seller
 -- ============================================================
+
+-- ─── Memberships ──────────────────────────────────────────────
+create table if not exists public.memberships (
+  id                        uuid primary key default uuid_generate_v4(),
+  user_id                   uuid not null references public.profiles(id) on delete cascade,
+  plan_id                   text not null default 'buyer_free',
+  status                    text not null default 'active'
+                              check (status in ('active', 'cancelled', 'past_due')),
+  stripe_subscription_id    text,
+  stripe_customer_id        text,
+  requests_used_this_month  int default 0,
+  bids_used_this_month      int default 0,
+  renews_at                 timestamptz,
+  created_at                timestamptz default now(),
+  updated_at                timestamptz default now(),
+  unique(user_id)
+);
+
+alter table public.memberships enable row level security;
+
+create policy "memberships: own read"
+  on public.memberships for select using (auth.uid() = user_id);
+
+create policy "memberships: own update"
+  on public.memberships for update using (auth.uid() = user_id);
+
+create index idx_memberships_user on public.memberships(user_id);
+
+-- Reset usage counts on 1st of each month
+create or replace function reset_monthly_usage()
+returns void as $$
+begin
+  update public.memberships
+  set requests_used_this_month = 0,
+      bids_used_this_month = 0,
+      updated_at = now();
+end;
+$$ language plpgsql security definer;
