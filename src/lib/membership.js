@@ -35,7 +35,7 @@ export const BUYER_PLANS = [
     description: 'For active clubs serious about saving',
     color: '#1a8250',
     popular: true,
-    stripePriceId: 'price_buyer_pro_monthly', // replace with real Stripe price ID
+    stripePriceId: 'price_1TLoZpKSFMa1JWApWkk7Crnk', // replace with real Stripe price ID
     limits: {
       requestsPerMonth: Infinity,
       savingsReport: true,
@@ -63,7 +63,7 @@ export const BUYER_PLANS = [
     interval: 'month',
     description: 'For management companies & multi-course operators',
     color: '#1f6feb',
-    stripePriceId: 'price_buyer_enterprise_monthly',
+    stripePriceId: 'price_1TLoccKSFMa1JWAp9wUEJ3yS',
     limits: {
       requestsPerMonth: Infinity,
       savingsReport: true,
@@ -118,7 +118,7 @@ export const VENDOR_PLANS = [
     description: 'For vendors serious about growing',
     color: '#1a8250',
     popular: true,
-    stripePriceId: 'price_vendor_pro_monthly',
+    stripePriceId: 'price_1TLodfKSFMa1JWApkOIPigvv',
     limits: {
       bidsPerMonth: Infinity,
       featuredListing: true,
