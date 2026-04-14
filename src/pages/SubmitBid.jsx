@@ -38,70 +38,9 @@ export default function SubmitBid() {
         status: 'pending'
       }).select().single()
       if (err) throw new Error(err.message)
-      // Send email to buyer
       supabase.functions.invoke('send-email', {
         body: { type: 'new_bid', bidId: newBid.id, requestId: id }
       }).catch(e => console.log('Email error:', e))
-      setSubmitted(true)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setSubmitting(false)
-    }
-  }seEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase.js'
-import { CATEGORIES } from '../lib/data.js'
-
-const fmt = n => '$' + Number(n || 0).toLocaleString()
-
-export default function SubmitBid() {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const [request, setRequest] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState('')
-  const [form, setForm] = useState({ amount: '', delivery_days: '', notes: '' })
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
-
-  useEffect(() => {
-    supabase.from('requests').select('*, buyer:profiles(org_name, location)').eq('id', id).single().then(({ data }) => {
-      setRequest(data)
-      setLoading(false)
-    })
-  }, [id])
-
-  async function handleSubmit() {
-    if (!form.amount) { setError('Please enter your bid amount'); return }
-    setSubmitting(true); setError('')
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not logged in')
-      const { error: err } = await supabase.from('bids').insert({
-        request_id: id,
-        vendor_id: user.id,
-        amount: parseFloat(form.amount),
-        delivery_days: form.delivery_days ? parseInt(form.delivery_days) : null,
-        notes: form.notes,
-        status: 'pending'
-      })
-      if (err) throw new Error(JSON.stringify(err))
-      // Send email notification to buyer
-      try {
-        const { data: request } = await supabase.from('requests').select('title, buyer_id, buyer:profiles(full_name)').eq('id', id).single()
-        const { data: buyerUser } = await supabase.from('profiles').select('full_name').eq('id', request.buyer_id).single()
-        const { data: authUsers } = await supabase.auth.admin?.listUsers?.() 
-        // Use edge function to send email
-        await supabase.functions.invoke('send-email', {
-          body: {
-            to: user.email, // fallback - will fix with proper buyer email lookup
-            subject: 'New bid received on: ' + request.title,
-            html: '<h2>New bid received!</h2><p>A vendor submitted a bid on <strong>' + request.title + '</strong>.</p><p>Log in to <a href="https://fairwayprocurement.com">fairwayprocurement.com</a> to review it.</p>'
-          }
-        })
-      } catch(e) { console.log('Email error:', e) }
       setSubmitted(true)
     } catch (err) {
       setError(err.message)
@@ -121,7 +60,7 @@ export default function SubmitBid() {
       <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
       <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Bid submitted!</div>
       <div style={{ fontSize: 14, color: 'var(--slate-500)', marginBottom: 24, lineHeight: 1.6 }}>
-        Your bid of <strong>{fmt(parseFloat(form.amount))}</strong> has been sent to {request.buyer?.org_name}. You will be notified if awarded.
+        Your bid of <strong>{fmt(parseFloat(form.amount))}</strong> has been sent. You will be notified if awarded.
       </div>
       <button onClick={() => navigate('/seller')} style={{ padding: '11px 24px', background: '#16a34a', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', marginRight: 10 }}>Browse more</button>
       <button onClick={() => navigate('/seller/dashboard')} style={{ padding: '11px 24px', background: '#f1f5f9', border: 'none', borderRadius: 8, fontSize: 14, cursor: 'pointer' }}>Dashboard</button>
