@@ -40,7 +40,7 @@ export default function SubmitBid() {
       if (err) throw new Error(err.message)
       supabase.functions.invoke('send-email', {
         body: { type: 'new_bid', bidId: newBid.id, requestId: id }
-      }).catch(e => console.log('Email error:', e))
+      }).then(r => console.log('Email result:', JSON.stringify(r))).catch(e => console.error('Email error:', e))
       setSubmitted(true)
     } catch (err) {
       setError(err.message)
