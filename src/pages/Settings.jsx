@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
-import { Card, PageHeader, Btn, Badge } from '../components/UI.jsx'
-import { getPlan, MOCK_MEMBERSHIP } from '../lib/membership.js'
-import Pricing from './Pricing.jsx'
+import React, { useState, useEffect } from 'react'
+import { Card, PageHeader, Btn } from '../components/UI.jsx'
+import { supabase } from '../lib/supabase.js'
 
 function Section({ title, children }) {
   return (
@@ -14,150 +13,109 @@ function Section({ title, children }) {
   )
 }
 
-function SettingRow({ label, description, children }) {
-  return (
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      gap: 16, paddingBottom: 16, marginBottom: 16,
-      borderBottom: '1px solid var(--slate-50)',
-    }}>
-      <div>
-        <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 2 }}>{label}</div>
-        {description && <div style={{ fontSize: 12, color: 'var(--slate-400)' }}>{description}</div>}
-      </div>
-      <div style={{ flexShrink: 0 }}>{children}</div>
-    </div>
-  )
-}
-
-function Toggle({ value, onChange }) {
-  return (
-    <button onClick={() => onChange(!value)} style={{
-      width: 42, height: 24, borderRadius: 12, border: 'none',
-      background: value ? 'var(--green-500)' : 'var(--slate-200)',
-      cursor: 'pointer', position: 'relative', transition: 'background .2s',
-    }}>
-      <div style={{
-        width: 18, height: 18, borderRadius: '50%', background: 'white',
-        position: 'absolute', top: 3,
-        left: value ? 21 : 3,
-        transition: 'left .2s',
-        boxShadow: '0 1px 3px rgba(0,0,0,.15)',
-      }} />
-    </button>
-  )
-}
+const inputStyle = { width: '100%', padding: '10px 12px', border: '1px solid var(--slate-200)', borderRadius: 8, fontSize: 14, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }
+const labelStyle = { fontSize: 12, fontWeight: 500, color: 'var(--slate-500)', display: 'block', marginBottom: 5 }
 
 export default function Settings({ role }) {
-  const [notifs, setNotifs] = useState({ newBid: true, closing: true, awarded: true, marketing: false })
+  const [profile, setProfile] = useState(null)
+  const [user, setUser] = useState(null)
+  const [form, setForm] = useState({ full_name: '', org_name: '', location: '' })
+  const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
-  const [showPricing, setShowPricing] = useState(false)
+  const [membership, setMembership] = useState(null)
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
-  const membership = MOCK_MEMBERSHIP[role] || MOCK_MEMBERSHIP.buyer
-  const plan = getPlan(membership.planId, role)
+  useEffect(() => {
+    async function load() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      setUser(user)
+      const { data: prof } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+      setProfile(prof)
+      setForm({
+        full_name: prof?.full_name || user.user_metadata?.full_name || '',
+        org_name: prof?.org_name || user.user_metadata?.org_name || '',
+        location: prof?.location || user.user_metadata?.location || '',
+      })
+      const { data: mem } = await supabase.from('memberships').select('*').eq('user_id', user.id).single()
+      setMembership(mem)
+    }
+    load()
+  }, [])
 
-  function handleSave() {
+  async function handleSave() {
+    setSaving(true)
+    await supabase.from('profiles').update({
+      full_name: form.full_name,
+      org_name: form.org_name,
+      location: form.location,
+    }).eq('id', user.id)
+    setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
 
-  if (showPricing) {
-    return <Pricing role={role} currentPlanId={membership.planId} onClose={() => setShowPricing(false)} />
+  async function handleSignOut() {
+    await supabase.auth.signOut()
+    window.location.href = '/'
   }
 
   return (
     <div className="fade-in">
-      <PageHeader title="Account Settings" subtitle="Manage your profile, notifications, and billing" />
+      <PageHeader title="Settings" subtitle="Manage your account and preferences" />
 
-      {/* Profile */}
       <Section title="Profile">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
-          {[
-            { label: 'Full name', value: role === 'buyer' ? 'James Whitfield' : 'Carlos Rivera' },
-            { label: role === 'buyer' ? 'Club name' : 'Company name', value: role === 'buyer' ? 'Pine Valley Country Club' : 'Gulf Shore Aggregates' },
-            { label: 'Email', value: role === 'buyer' ? 'james@pinevalleycc.com' : 'carlos@gulfshore.com' },
-            { label: 'Location', value: role === 'buyer' ? 'Naples, FL' : 'Tampa, FL' },
-          ].map(f => (
-            <div key={f.label} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <label style={{ fontSize: 12, fontWeight: 500, color: 'var(--slate-500)' }}>{f.label}</label>
-              <input defaultValue={f.value} style={{
-                padding: '9px 12px', border: '1px solid var(--slate-200)',
-                borderRadius: 8, fontSize: 13, outline: 'none',
-              }} />
-            </div>
-          ))}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+          <div>
+            <label style={labelStyle}>Full name</label>
+            <input value={form.full_name} onChange={e => set('full_name', e.target.value)} style={inputStyle} placeholder="Your name" />
+          </div>
+          <div>
+            <label style={labelStyle}>{role === 'buyer' ? 'Club name' : 'Company name'}</label>
+            <input value={form.org_name} onChange={e => set('org_name', e.target.value)} style={inputStyle} placeholder={role === 'buyer' ? 'Pine Valley CC' : 'Gulf Shore Aggregates'} />
+          </div>
+          <div>
+            <label style={labelStyle}>Email</label>
+            <input value={user?.email || ''} disabled style={{ ...inputStyle, background: 'var(--slate-50)', color: 'var(--slate-400)' }} />
+          </div>
+          <div>
+            <label style={labelStyle}>Location</label>
+            <input value={form.location} onChange={e => set('location', e.target.value)} style={inputStyle} placeholder="Naples, FL" />
+          </div>
         </div>
-        <Btn variant="primary" size="sm" onClick={handleSave}>{saved ? '✓ Saved' : 'Save changes'}</Btn>
+        <Btn variant="primary" onClick={handleSave} disabled={saving}>
+          {saved ? '✓ Saved!' : saving ? 'Saving...' : 'Save changes'}
+        </Btn>
       </Section>
 
-      {/* Notifications */}
-      <Section title="Notifications">
-        <SettingRow label="New bid received" description="Email when a vendor places a bid on your request">
-          <Toggle value={notifs.newBid} onChange={v => setNotifs(n => ({ ...n, newBid: v }))} />
-        </SettingRow>
-        <SettingRow label="Request closing soon" description="Reminder 24 hours before your request closes">
-          <Toggle value={notifs.closing} onChange={v => setNotifs(n => ({ ...n, closing: v }))} />
-        </SettingRow>
-        <SettingRow label="Order updates" description="Shipping and delivery status updates">
-          <Toggle value={notifs.awarded} onChange={v => setNotifs(n => ({ ...n, awarded: v }))} />
-        </SettingRow>
-        <SettingRow label="Product updates & tips" description="Occasional emails about new features">
-          <Toggle value={notifs.marketing} onChange={v => setNotifs(n => ({ ...n, marketing: v }))} />
-        </SettingRow>
-        <Btn variant="primary" size="sm" onClick={handleSave}>{saved ? '✓ Saved' : 'Save preferences'}</Btn>
-      </Section>
-
-      {/* Plan */}
-      <Section title="Plan & Billing">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '4px 0 20px', borderBottom: '1px solid var(--slate-50)', marginBottom: 16 }}>
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-              <div style={{ fontSize: 16, fontWeight: 700 }}>{plan.name}</div>
-              <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 20, background: plan.price > 0 ? '#dcfce7' : 'var(--slate-100)', color: plan.price > 0 ? '#166534' : 'var(--slate-500)' }}>
-                {plan.price > 0 ? 'Active' : 'Free'}
-              </span>
+      <Section title="Subscription">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>
+              {membership?.plan_id === 'buyer_pro' ? 'Pro Club' : membership?.plan_id === 'vendor_pro' ? 'Pro Vendor' : 'Free plan'}
             </div>
-            <div style={{ fontSize: 13, color: 'var(--slate-500)' }}>
-              {plan.price === 0 ? 'Free plan · Upgrade to unlock more features' : `$${plan.price}/month · Renews monthly`}
+            <div style={{ fontSize: 12, color: 'var(--slate-400)' }}>
+              {membership?.plan_id === 'buyer_pro' ? '$1,000/month · Unlimited requests' : 'Limited access'}
             </div>
           </div>
-          <Btn variant="primary" size="sm" onClick={() => setShowPricing(true)}>
-            {plan.price === 0 ? 'Upgrade plan' : 'Manage plan'}
-          </Btn>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 12, padding: '3px 10px', borderRadius: 20, background: membership?.status === 'active' ? '#dcfce7' : '#fee2e2', color: membership?.status === 'active' ? '#16a34a' : '#dc2626', fontWeight: 500 }}>
+              {membership?.status || 'inactive'}
+            </span>
+          </div>
         </div>
-
-        {plan.price === 0 && role === 'buyer' && (
-          <div style={{ background: 'var(--green-50)', border: '1px solid #bbf7d0', borderRadius: 10, padding: '14px 16px', marginBottom: 16 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--green-800)', marginBottom: 4 }}>
-              You have used {membership.requestsUsedThisMonth} of 3 free requests this month
-            </div>
-            <div style={{ height: 6, background: '#bbf7d0', borderRadius: 3, overflow: 'hidden', marginBottom: 8 }}>
-              <div style={{ height: '100%', background: 'var(--green-600)', borderRadius: 3, width: `${(membership.requestsUsedThisMonth / 3) * 100}%` }} />
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--green-700)' }}>Upgrade to Pro Club for unlimited requests</div>
-          </div>
-        )}
-
-        <SettingRow label="Payment method" description="Used for subscription billing">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            {plan.price > 0 ? (
-              <div style={{ fontSize: 13, color: 'var(--slate-600)' }}>Visa ending 4242</div>
-            ) : (
-              <div style={{ fontSize: 13, color: 'var(--slate-400)' }}>No card on file</div>
-            )}
-            <Btn size="sm" onClick={() => setShowPricing(true)}>{plan.price > 0 ? 'Update' : 'Add card'}</Btn>
-          </div>
-        </SettingRow>
-        <SettingRow label="Invoices" description="Download past invoices and receipts">
-          <Btn size="sm" onClick={() => {}}>View invoices →</Btn>
-        </SettingRow>
       </Section>
 
-      {/* Danger zone */}
-      <Section title="Danger Zone">
-        <SettingRow label="Delete account" description="Permanently delete your account and all data. This cannot be undone.">
-          <Btn variant="danger" size="sm">Delete account</Btn>
-        </SettingRow>
+      <Section title="Danger zone">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 2 }}>Sign out</div>
+            <div style={{ fontSize: 12, color: 'var(--slate-400)' }}>Sign out of your Fairway account</div>
+          </div>
+          <button onClick={handleSignOut} style={{ padding: '8px 16px', background: 'white', border: '1px solid #fca5a5', color: '#dc2626', borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>
+            Sign out
+          </button>
+        </div>
       </Section>
     </div>
   )
