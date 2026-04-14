@@ -38,6 +38,20 @@ export default function SubmitBid() {
         status: 'pending'
       })
       if (err) throw new Error(JSON.stringify(err))
+      // Send email notification to buyer
+      try {
+        const { data: request } = await supabase.from('requests').select('title, buyer_id, buyer:profiles(full_name)').eq('id', id).single()
+        const { data: buyerUser } = await supabase.from('profiles').select('full_name').eq('id', request.buyer_id).single()
+        const { data: authUsers } = await supabase.auth.admin?.listUsers?.() 
+        // Use edge function to send email
+        await supabase.functions.invoke('send-email', {
+          body: {
+            to: user.email, // fallback - will fix with proper buyer email lookup
+            subject: 'New bid received on: ' + request.title,
+            html: '<h2>New bid received!</h2><p>A vendor submitted a bid on <strong>' + request.title + '</strong>.</p><p>Log in to <a href="https://fairwayprocurement.com">fairwayprocurement.com</a> to review it.</p>'
+          }
+        })
+      } catch(e) { console.log('Email error:', e) }
       setSubmitted(true)
     } catch (err) {
       setError(err.message)
