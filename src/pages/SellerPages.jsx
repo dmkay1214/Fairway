@@ -95,18 +95,31 @@ export function SellerProfile() {
     }
   }, [])
 
+  // Check if already connected on load
+  useEffect(() => {
+    supabase.auth.getUser().then(({data:{user}}) => {
+      if (!user) return
+      supabase.from('profiles').select('stripe_account_id').eq('id', user.id).single().then(({data}) => {
+        if (data?.stripe_account_id) setStripeConnected(true)
+      })
+    })
+  }, [])
+
   async function handleConnectStripe() {
     setConnecting(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data, error } = await supabase.functions.invoke('create-connect-account', {
-      body: { userId: user.id, email: user.email }
-    })
-    if (data?.url) {
-      // Save the stripe account ID
-      await supabase.from('profiles').update({ stripe_account_id: data.accountId }).eq('id', user.id)
-      window.location.href = data.url
-    } else {
-      alert('Error: ' + (error?.message || 'Unknown'))
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data, error } = await supabase.functions.invoke('create-connect-account', {
+        body: { userId: user.id, email: user.email }
+      })
+      if (data?.url && data?.accountId) {
+        await supabase.from('profiles').update({ stripe_account_id: data.accountId }).eq('id', user.id)
+        window.location.href = data.url
+      } else {
+        throw new Error(error?.message || 'Failed to create Stripe account')
+      }
+    } catch(err) {
+      alert('Error: ' + err.message)
       setConnecting(false)
     }
   }
