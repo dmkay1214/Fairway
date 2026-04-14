@@ -14,6 +14,7 @@ const buyerNav = [
 ]
 
 const sellerNav = [
+  { path: '/seller/dashboard', label: 'Dashboard', icon: GridIcon },
   { path: '/seller', label: 'Opportunities', icon: SearchIcon },
   { path: '/seller/bids', label: 'My Bids', icon: ChartIcon },
   { path: '/seller/orders', label: 'Active Orders', icon: BoxIcon },

@@ -11,6 +11,7 @@ import Requests from './pages/Requests.jsx'
 import Bids from './pages/Bids.jsx'
 import { Orders, Savings, Vendors } from './pages/BuyerPages.jsx'
 import { SellerOpportunities, SellerProfile } from './pages/SellerPages.jsx'
+import SellerDashboard from './pages/SellerDashboard.jsx'
 import Settings from './pages/Settings.jsx'
 import Admin from './pages/Admin.jsx'
 import Pricing from './pages/Pricing.jsx'
@@ -93,11 +94,12 @@ function AppShell({ role, user, onSignOut }) {
             <Route path="/vendors" element={<Vendors />} />
             <Route path="/settings" element={<Settings role={role} />} />
             <Route path="/pricing" element={<Pricing role={role} userId={user?.id} userEmail={user?.email} />} />
+            <Route path="/seller/dashboard" element={<SellerDashboard />} />
             <Route path="/seller" element={<SellerOpportunities />} />
             <Route path="/seller/bids" element={<SellerOpportunities />} />
             <Route path="/seller/orders" element={<Orders />} />
             <Route path="/seller/profile" element={<SellerProfile />} />
-            <Route path="*" element={<Navigate to={role === 'buyer' ? '/dashboard' : '/seller'} replace />} />
+            <Route path="*" element={<Navigate to={role === 'buyer' ? '/dashboard' : '/seller/dashboard'} replace />} />
           </Routes>
         </main>
       </div>
