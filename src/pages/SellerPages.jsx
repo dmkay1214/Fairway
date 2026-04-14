@@ -85,6 +85,32 @@ export function SellerProfile() {
     })
   }, [])
 
+  const [connecting, setConnecting] = useState(false)
+  const [stripeConnected, setStripeConnected] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('connect') === 'success') {
+      setStripeConnected(true)
+    }
+  }, [])
+
+  async function handleConnectStripe() {
+    setConnecting(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data, error } = await supabase.functions.invoke('create-connect-account', {
+      body: { userId: user.id, email: user.email }
+    })
+    if (data?.url) {
+      // Save the stripe account ID
+      await supabase.from('profiles').update({ stripe_account_id: data.accountId }).eq('id', user.id)
+      window.location.href = data.url
+    } else {
+      alert('Error: ' + (error?.message || 'Unknown'))
+      setConnecting(false)
+    }
+  }
+
   async function handleSave() {
     setSaving(true)
     const {data:{user}} = await supabase.auth.getUser()
@@ -118,6 +144,21 @@ export function SellerProfile() {
             </div>
           </div>
           <Btn variant="primary" onClick={handleSave} disabled={saving}>{saving?'Saving...':'Save profile'}</Btn>
+          
+          <div style={{borderTop:'1px solid var(--slate-100)',paddingTop:16,marginTop:4}}>
+            <div style={{fontSize:13,fontWeight:600,marginBottom:4}}>Payment setup</div>
+            <div style={{fontSize:12,color:'var(--slate-500)',marginBottom:12}}>Connect your bank account to receive payments when you win contracts. Fairway takes a 3% platform fee.</div>
+            {stripeConnected ? (
+              <div style={{display:'flex',alignItems:'center',gap:8,padding:'10px 14px',background:'#f0fdf4',borderRadius:8,border:'1px solid #bbf7d0'}}>
+                <span style={{color:'#16a34a',fontSize:14}}>✓</span>
+                <span style={{fontSize:13,color:'#15803d',fontWeight:500}}>Stripe account connected — you can receive payments</span>
+              </div>
+            ) : (
+              <button onClick={handleConnectStripe} disabled={connecting} style={{display:'flex',alignItems:'center',gap:8,padding:'10px 16px',background:connecting?'#94a3b8':'#635bff',color:'white',border:'none',borderRadius:8,fontSize:13,fontWeight:600,cursor:connecting?'not-allowed':'pointer',fontFamily:'var(--font-body)'}}>
+                {connecting ? 'Redirecting to Stripe...' : '⚡ Connect Stripe account'}
+              </button>
+            )}
+          </div>
         </div>
       </Card>
     </div>
