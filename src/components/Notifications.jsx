@@ -1,101 +1,111 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase.js'
 
-const MOCK_NOTIFICATIONS = [
-  { id: 1, type: 'bid', title: 'New bid on your request', body: 'Gulf Shore Aggregates bid $5,920 on Bunker sand — 40 tons', time: '2 min ago', read: false, icon: '💰' },
-  { id: 2, type: 'bid', title: 'New bid received', body: 'Carolina Sand Dist. bid $6,340 on Bunker sand — 40 tons', time: '14 min ago', read: false, icon: '💰' },
-  { id: 3, type: 'closing', title: 'Request closing soon', body: 'Fairway mower rental closes in 4 hours with 4 bids', time: '1 hr ago', read: false, icon: '⏰' },
-  { id: 4, type: 'delivery', title: 'Order in transit', body: 'Fertilizer — Greens mix is on its way. Delivery Dec 15.', time: '3 hrs ago', read: true, icon: '🚚' },
-  { id: 5, type: 'awarded', title: 'Order confirmed', body: 'Seasonal labor PO-2025-0038 confirmed with TurfLine Labor Co.', time: 'Yesterday', read: true, icon: '✅' },
-]
-
-export default function NotificationBell() {
+export default function Notifications() {
   const [open, setOpen] = useState(false)
-  const [notifs, setNotifs] = useState(MOCK_NOTIFICATIONS)
-  const unread = notifs.filter(n => !n.read).length
+  const [notifications, setNotifications] = useState([])
+  const unread = notifications.filter(n => !n.read).length
 
-  function markAllRead() {
-    setNotifs(n => n.map(x => ({ ...x, read: true })))
+  useEffect(() => {
+    async function load() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20)
+      setNotifications(data || [])
+
+      // Subscribe to real-time new notifications
+      const channel = supabase
+        .channel('notifications')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`
+        }, (payload) => {
+          setNotifications(prev => [payload.new, ...prev])
+        })
+        .subscribe()
+
+      return () => supabase.removeChannel(channel)
+    }
+    load()
+  }, [])
+
+  async function markRead(id) {
+    await supabase.from('notifications').update({ read: true }).eq('id', id)
+    setNotifications(ns => ns.map(n => n.id === id ? { ...n, read: true } : n))
+  }
+
+  async function markAllRead() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    await supabase.from('notifications').update({ read: true }).eq('user_id', user.id)
+    setNotifications(ns => ns.map(n => ({ ...n, read: true })))
+  }
+
+  function timeAgo(date) {
+    const s = Math.floor((Date.now() - new Date(date)) / 1000)
+    if (s < 60) return 'just now'
+    if (s < 3600) return Math.floor(s/60) + 'm ago'
+    if (s < 86400) return Math.floor(s/3600) + 'h ago'
+    return Math.floor(s/86400) + 'd ago'
   }
 
   return (
     <div style={{ position: 'relative' }}>
       <button
         onClick={() => setOpen(o => !o)}
-        style={{
-          width: 36, height: 36, borderRadius: 9,
-          border: '1px solid var(--slate-200)', background: 'white',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', position: 'relative', flexShrink: 0,
-        }}
+        style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--slate-600)" strokeWidth="1.5">
-          <path d="M8 1a5 5 0 015 5v3l1.5 2H1.5L3 9V6a5 5 0 015-5z" />
-          <path d="M6.5 13a1.5 1.5 0 003 0" />
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--slate-500)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
         </svg>
         {unread > 0 && (
-          <div style={{
-            position: 'absolute', top: 5, right: 5,
-            width: 7, height: 7, borderRadius: '50%',
-            background: '#ef4444', border: '1.5px solid white',
-          }} />
+          <span style={{ position: 'absolute', top: 2, right: 2, width: 16, height: 16, background: '#ef4444', borderRadius: '50%', fontSize: 9, fontWeight: 700, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {unread > 9 ? '9+' : unread}
+          </span>
         )}
       </button>
 
       {open && (
         <>
           <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 99 }} />
-          <div style={{
-            position: 'absolute', right: 0, top: 44, zIndex: 100,
-            width: 340, background: 'white',
-            border: '1px solid var(--slate-100)', borderRadius: 14,
-            boxShadow: 'var(--shadow-lg)', overflow: 'hidden',
-          }} className="fade-in">
-            <div style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '14px 16px', borderBottom: '1px solid var(--slate-50)',
-            }}>
-              <div style={{ fontSize: 13, fontWeight: 600 }}>
-                Notifications {unread > 0 && <span style={{ background: '#ef4444', color: 'white', fontSize: 10, padding: '1px 6px', borderRadius: 10, marginLeft: 6 }}>{unread}</span>}
-              </div>
+          <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: 8, width: 340, background: 'white', borderRadius: 14, boxShadow: '0 8px 40px rgba(0,0,0,.15)', border: '1px solid var(--slate-100)', zIndex: 100, overflow: 'hidden' }}>
+            <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--slate-50)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: 13, fontWeight: 700 }}>Notifications</div>
               {unread > 0 && (
-                <button onClick={markAllRead} style={{ background: 'none', border: 'none', fontSize: 11, color: 'var(--green-600)', cursor: 'pointer', fontWeight: 500 }}>
-                  Mark all read
-                </button>
+                <button onClick={markAllRead} style={{ background: 'none', border: 'none', fontSize: 12, color: 'var(--green-600)', cursor: 'pointer', fontFamily: 'inherit' }}>Mark all read</button>
               )}
             </div>
             <div style={{ maxHeight: 380, overflowY: 'auto' }}>
-              {notifs.map(n => (
-                <div
-                  key={n.id}
-                  onClick={() => setNotifs(ns => ns.map(x => x.id === n.id ? { ...x, read: true } : x))}
-                  style={{
-                    display: 'flex', gap: 11, padding: '12px 16px',
-                    borderBottom: '1px solid var(--slate-50)',
-                    background: n.read ? 'transparent' : 'var(--green-50)',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'var(--slate-50)'}
-                  onMouseLeave={e => e.currentTarget.style.background = n.read ? 'transparent' : 'var(--green-50)'}
+              {notifications.length === 0 ? (
+                <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--slate-400)', fontSize: 13 }}>
+                  <div style={{ fontSize: 28, marginBottom: 8 }}>🔔</div>
+                  No notifications yet
+                </div>
+              ) : notifications.map(n => (
+                <div key={n.id} onClick={() => markRead(n.id)} style={{ padding: '12px 16px', borderBottom: '1px solid var(--slate-50)', cursor: 'pointer', background: n.read ? 'white' : '#f0fdf4', display: 'flex', gap: 10, alignItems: 'flex-start' }}
+                  onMouseEnter={e => e.currentTarget.style.background = n.read ? 'var(--slate-50)' : '#dcfce7'}
+                  onMouseLeave={e => e.currentTarget.style.background = n.read ? 'white' : '#f0fdf4'}
                 >
-                  <div style={{
-                    width: 34, height: 34, borderRadius: 8, background: 'var(--slate-100)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 16, flexShrink: 0,
-                  }}>{n.icon}</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--slate-800)', marginBottom: 2 }}>{n.title}</div>
-                    <div style={{ fontSize: 11, color: 'var(--slate-500)', lineHeight: 1.4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{n.body}</div>
-                    <div style={{ fontSize: 10, color: 'var(--slate-400)', marginTop: 3 }}>{n.time}</div>
+                  <div style={{ fontSize: 20, flexShrink: 0 }}>
+                    {n.type === 'bid_awarded' ? '🏆' : n.type === 'new_bid' ? '📨' : '🔔'}
                   </div>
-                  {!n.read && <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green-500)', flexShrink: 0, marginTop: 4 }} />}
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: n.read ? 400 : 600, marginBottom: 2 }}>{n.title}</div>
+                    {n.message && <div style={{ fontSize: 12, color: 'var(--slate-500)', lineHeight: 1.4 }}>{n.message}</div>}
+                    <div style={{ fontSize: 11, color: 'var(--slate-400)', marginTop: 4 }}>{timeAgo(n.created_at)}</div>
+                  </div>
+                  {!n.read && <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--green-500)', flexShrink: 0, marginTop: 4 }} />}
                 </div>
               ))}
             </div>
-            {notifs.every(n => n.read) && (
-              <div style={{ padding: '24px', textAlign: 'center', color: 'var(--slate-400)', fontSize: 13 }}>
-                All caught up ✓
-              </div>
-            )}
           </div>
         </>
       )}
