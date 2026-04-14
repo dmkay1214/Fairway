@@ -33,6 +33,7 @@ export default function Bids() {
   const req = requests.find(r => r.id === selectedId)
 
   async function handleAward(bid) {
+    if (req === undefined || req === null) { alert('No request selected'); return }
     setAwarding(bid.id)
     try {
       const { data: { user } } = await supabase.auth.getUser()
