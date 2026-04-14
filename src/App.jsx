@@ -113,7 +113,9 @@ export default function App() {
   const [signupRole, setSignupRole] = useState('buyer')
 
   async function checkAccess(sessionUser) {
-    const userRole = sessionUser?.user_metadata?.role || 'buyer'
+    // Check profile for role first, fallback to metadata
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', sessionUser.id).single()
+    const userRole = profile?.role || sessionUser?.user_metadata?.role || 'buyer'
     setRole(userRole)
     setUser(sessionUser)
     if (userRole === 'seller') { setScreen('app'); return }
