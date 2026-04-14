@@ -23,7 +23,7 @@ export default function Notifications() {
       const interval = setInterval(async () => {
         const { data } = await supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20)
         setNotifications(data || [])
-      }, 30000)
+      }, 5000)
       return () => clearInterval(interval)
     }
     load()
