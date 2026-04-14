@@ -18,20 +18,12 @@ export default function Notifications() {
         .limit(20)
       setNotifications(data || [])
 
-      // Subscribe to real-time new notifications
-      const channel = supabase
-        .channel('notifications')
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${user.id}`
-        }, (payload) => {
-          setNotifications(prev => [payload.new, ...prev])
-        })
-        .subscribe()
-
-      return () => supabase.removeChannel(channel)
+      // Poll every 30 seconds for new notifications
+      const interval = setInterval(async () => {
+        const { data } = await supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(20)
+        setNotifications(data || [])
+      }, 30000)
+      return () => clearInterval(interval)
     }
     load()
   }, [])
