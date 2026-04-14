@@ -38,9 +38,9 @@ export default function SubmitBid() {
         status: 'pending'
       }).select().single()
       if (err) throw new Error(err.message)
-      supabase.functions.invoke('send-email', {
+      await supabase.functions.invoke('send-email', {
         body: { type: 'new_bid', bidId: newBid.id, requestId: id }
-      }).then(r => console.log('Email result:', JSON.stringify(r))).catch(e => console.error('Email error:', e))
+      })
       setSubmitted(true)
     } catch (err) {
       setError(err.message)
@@ -117,4 +117,3 @@ export default function SubmitBid() {
     </div>
   )
 }
-// email fix 1776195842
