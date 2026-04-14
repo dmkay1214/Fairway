@@ -18,7 +18,7 @@ export default function SellerDashboard() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', user.id).single()
-      setProfile(prof)
+      setProfile({ ...user.user_metadata, ...prof })
       const { data: reqs } = await supabase.from('requests').select('*, buyer:profiles(org_name, location), bids(count)').eq('status', 'bidding').order('created_at', { ascending: false }).limit(5)
       setOpportunities(reqs || [])
       const { data: bids } = await supabase.from('bids').select('*, request:requests(title, category, budget, status, buyer:profiles(org_name))').eq('vendor_id', user.id).order('created_at', { ascending: false }).limit(5)
