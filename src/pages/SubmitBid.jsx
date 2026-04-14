@@ -29,6 +29,56 @@ export default function SubmitBid() {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not logged in')
+      const { data: newBid, error: err } = await supabase.from('bids').insert({
+        request_id: id,
+        vendor_id: user.id,
+        amount: parseFloat(form.amount),
+        delivery_days: form.delivery_days ? parseInt(form.delivery_days) : null,
+        notes: form.notes,
+        status: 'pending'
+      }).select().single()
+      if (err) throw new Error(err.message)
+      // Send email to buyer
+      supabase.functions.invoke('send-email', {
+        body: { type: 'new_bid', bidId: newBid.id, requestId: id }
+      }).catch(e => console.log('Email error:', e))
+      setSubmitted(true)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSubmitting(false)
+    }
+  }seEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase.js'
+import { CATEGORIES } from '../lib/data.js'
+
+const fmt = n => '$' + Number(n || 0).toLocaleString()
+
+export default function SubmitBid() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [request, setRequest] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+  const [form, setForm] = useState({ amount: '', delivery_days: '', notes: '' })
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+
+  useEffect(() => {
+    supabase.from('requests').select('*, buyer:profiles(org_name, location)').eq('id', id).single().then(({ data }) => {
+      setRequest(data)
+      setLoading(false)
+    })
+  }, [id])
+
+  async function handleSubmit() {
+    if (!form.amount) { setError('Please enter your bid amount'); return }
+    setSubmitting(true); setError('')
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not logged in')
       const { error: err } = await supabase.from('bids').insert({
         request_id: id,
         vendor_id: user.id,
