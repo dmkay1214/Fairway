@@ -37,7 +37,7 @@ export default function SubmitBid() {
         notes: form.notes,
         status: 'pending'
       })
-      if (err) throw new Error(err.message)
+      if (err) throw new Error(JSON.stringify(err))
       setSubmitted(true)
     } catch (err) {
       setError(err.message)
