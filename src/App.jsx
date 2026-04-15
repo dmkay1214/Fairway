@@ -16,6 +16,7 @@ import SellerDashboard from './pages/SellerDashboard.jsx'
 import Settings from './pages/Settings.jsx'
 import Admin from './pages/Admin.jsx'
 import Pricing from './pages/Pricing.jsx'
+import MobileNav from './components/MobileNav.jsx'
 
 function LoadingScreen() {
   return (
@@ -105,6 +106,7 @@ function AppShell({ role, user, onSignOut }) {
           </Routes>
         </main>
       </div>
+      <MobileNav role={role} />
       <NewRequestModal open={newRequestOpen} onClose={() => setNewRequestOpen(false)} />
     </div>
   )
