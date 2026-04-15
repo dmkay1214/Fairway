@@ -88,23 +88,7 @@ export default function Settings({ role }) {
         </Btn>
       </Section>
 
-      <Section title="Subscription">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>
-              {membership?.plan_id === 'buyer_pro' ? 'Pro Club' : membership?.plan_id === 'vendor_pro' ? 'Pro Vendor' : 'Free plan'}
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--slate-400)' }}>
-              {membership?.plan_id === 'buyer_pro' ? '$1,000/month · Unlimited requests' : 'Limited access'}
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 12, padding: '3px 10px', borderRadius: 20, background: membership?.status === 'active' ? '#dcfce7' : '#fee2e2', color: membership?.status === 'active' ? '#16a34a' : '#dc2626', fontWeight: 500 }}>
-              {membership?.status || 'inactive'}
-            </span>
-          </div>
-        </div>
-      </Section>
+      
 
       <Section title="Danger zone">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
