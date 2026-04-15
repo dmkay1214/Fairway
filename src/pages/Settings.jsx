@@ -101,6 +101,12 @@ export default function Settings({ role }) {
           </button>
         </div>
       </Section>
+
+      <div style={{ marginTop: 8, padding: '16px 0', display: 'flex', gap: 20 }}>
+        <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=6fc1aefa-fb21-4bdd-a989-0927eddf138f" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--slate-400)', textDecoration: 'none' }}>Privacy Policy</a>
+        <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=7d3fcb96-f4c1-45ee-bb23-55494b26b0d2" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--slate-400)', textDecoration: 'none' }}>Terms of Service</a>
+        <div style={{ fontSize: 12, color: 'var(--slate-300)' }}>© 2026 Fairway Procurement LLC</div>
+      </div>
     </div>
   )
 }
