@@ -104,7 +104,14 @@ export default function Bids() {
       )}
       {bids.length === 0 ? (
         <EmptyState icon="⏳" title="No bids yet" description="Vendors will submit bids here. Most requests get their first bid within 2 hours." />
-      ) : bids.map((bid, i) => {
+      ) : (<>
+        <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:12}}>
+          <span style={{fontSize:12,color:'var(--slate-500)'}}>Filter by location:</span>
+          <select value={locationFilter} onChange={e=>setLocationFilter(e.target.value)} style={{padding:'5px 10px',borderRadius:20,border:'1px solid var(--slate-200)',fontSize:12,fontFamily:'var(--font-body)',outline:'none',background:'white',cursor:'pointer'}}>
+            {locations.map(s=><option key={s} value={s}>{s==='all'?'All locations':s}</option>)}
+          </select>
+        </div>
+        {shownBids.map((bid, i) => {
         const isLowest = i === 0
         const savings = (req?.budget||0) - bid.amount
         const isAwarded = awarded[req?.id] === bid.id
@@ -134,7 +141,8 @@ export default function Bids() {
             </div>
           </Card>
         )
-      })}
+        })}
+      </>)}
     </div>
   )
 }
