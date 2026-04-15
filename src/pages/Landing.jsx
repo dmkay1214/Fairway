@@ -165,7 +165,7 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
 
       {/* Features */}
       <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16,
+        display: 'grid', gridTemplateColumns: window.innerWidth <= 768 ? '1fr' : 'repeat(3,1fr)', gap: 16,
         maxWidth: 900, margin: '0 auto', padding: '0 48px 80px',
       }}>
         {[
