@@ -160,7 +160,7 @@ export function SellerProfile() {
           
           <div style={{borderTop:'1px solid var(--slate-100)',paddingTop:16,marginTop:4}}>
             <div style={{fontSize:13,fontWeight:600,marginBottom:4}}>Payment setup</div>
-            <div style={{fontSize:12,color:'var(--slate-500)',marginBottom:12}}>Connect your bank account to receive payments when you win contracts. Fairway takes a 3% platform fee.</div>
+            <div style={{fontSize:12,color:'var(--slate-500)',marginBottom:12}}>Connect your bank account to receive payments when you win contracts. Fairway takes a 5% platform fee.</div>
             {stripeConnected ? (
               <div style={{display:'flex',alignItems:'center',gap:8,padding:'10px 14px',background:'#f0fdf4',borderRadius:8,border:'1px solid #bbf7d0'}}>
                 <span style={{color:'#16a34a',fontSize:14}}>✓</span>
