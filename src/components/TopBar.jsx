@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { supabase } from '../lib/supabase.js'
 import NotificationBell from './Notifications.jsx'
 
+const isMobile = () => window.innerWidth <= 768
 export default function TopBar({ role, onNewRequest, onAdmin, userName, orgName }) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [search, setSearch] = useState('')
