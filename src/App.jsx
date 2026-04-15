@@ -82,7 +82,9 @@ function AppShell({ role, user, onSignOut }) {
   const orgName = user?.user_metadata?.org_name || (role === 'buyer' ? 'My Club' : 'My Company')
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <Sidebar role={role} onRoleToggle={() => {}} />
+      </div>
+      <div className='desktop-sidebar' style={{ flexShrink: 0 }}>
+        <Sidebar role={role} onRoleToggle={() => {}} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <TopBar role={role} onNewRequest={() => setNewRequestOpen(true)} userName={userName} orgName={orgName} onSignOut={onSignOut} />
         <main style={{ flex: 1, overflowY: 'auto', padding: '28px 32px' }}>
