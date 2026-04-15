@@ -83,8 +83,7 @@ function AppShell({ role, user, onSignOut }) {
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       </div>
-      <div className='desktop-sidebar' style={{ flexShrink: 0 }}>
-        <Sidebar role={role} onRoleToggle={() => {}} />
+      {window.innerWidth > 768 && <div style={{ flexShrink: 0 }}><Sidebar role={role} onRoleToggle={() => {}} /></div>}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <TopBar role={role} onNewRequest={() => setNewRequestOpen(true)} userName={userName} orgName={orgName} onSignOut={onSignOut} />
         <main style={{ flex: 1, overflowY: 'auto', padding: '28px 32px' }}>
