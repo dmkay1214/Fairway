@@ -114,7 +114,15 @@ export function SignUp({ onSignUp, onLogin, initialRole = 'buyer' }) {
     if (!form.orgName || !form.location) { setError('Please fill in all fields'); return }
     setLoading(true); setError('')
     try {
-      await signUp({ email: form.email, password: form.password, fullName: form.fullName, role: roleTab, orgName: form.orgName, location: form.location, categories: form.categories })
+      const { data: signUpData } = await signUp({ email: form.email, password: form.password, fullName: form.fullName, role: roleTab, orgName: form.orgName, location: form.location, categories: form.categories })
+      // Send welcome email
+      supabase.functions.invoke('send-email', {
+        body: {
+          type: roleTab === 'buyer' ? 'welcome_buyer' : 'welcome_vendor',
+          to: form.email,
+          name: form.fullName || form.orgName || 'there'
+        }
+      }).catch(e => console.log('Welcome email error:', e))
       setSuccess(true)
     } catch (err) {
       setError(err.message)
