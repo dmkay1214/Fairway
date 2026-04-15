@@ -71,11 +71,11 @@ export default function AdminDashboard() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 24 }}>
-        {/* Recent users */}
+        {/* Buyers */}
         <div style={{ background: 'white', borderRadius: 12, border: '1px solid var(--slate-100)', overflow: 'hidden' }}>
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--slate-50)', fontSize: 13, fontWeight: 700 }}>Recent signups</div>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--slate-50)', fontSize: 13, fontWeight: 700 }}>Golf Clubs ({users.filter(u => u.role === 'buyer').length})</div>
           <div>
-            {users.slice(0, 8).map(u => (
+            {users.filter(u => u.role === 'buyer').slice(0, 8).map(u => (
               <div key={u.id} style={{ padding: '12px 20px', borderBottom: '1px solid var(--slate-50)', display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div style={{ width: 32, height: 32, borderRadius: 8, background: u.role === 'buyer' ? 'var(--green-100)' : 'var(--blue-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: u.role === 'buyer' ? 'var(--green-700)' : 'var(--blue-500)', flexShrink: 0 }}>
                   {u.role === 'buyer' ? 'B' : 'V'}
@@ -90,19 +90,25 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Recent requests */}
+        {/* Vendors */}
         <div style={{ background: 'white', borderRadius: 12, border: '1px solid var(--slate-100)', overflow: 'hidden' }}>
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--slate-50)', fontSize: 13, fontWeight: 700 }}>Recent requests</div>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--slate-50)', fontSize: 13, fontWeight: 700 }}>Vendors ({users.filter(u => u.role === 'seller').length})</div>
           <div>
-            {requests.slice(0, 8).map(r => (
-              <div key={r.id} style={{ padding: '12px 20px', borderBottom: '1px solid var(--slate-50)', display: 'flex', alignItems: 'center', gap: 10 }}>
+            {users.filter(u => u.role === 'seller').map(u => (
+              <div key={u.id} style={{ padding: '12px 20px', borderBottom: '1px solid var(--slate-50)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--blue-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--blue-500)', flexShrink: 0 }}>V</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.title}</div>
-                  <div style={{ fontSize: 11, color: 'var(--slate-400)' }}>{r.buyer?.org_name || 'Unknown club'}</div>
+                  <div style={{ fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.org_name || u.full_name || 'Unknown'}</div>
+                  <div style={{ fontSize: 11, color: 'var(--slate-400)' }}>{u.location || 'No location'} · Joined {new Date(u.created_at).toLocaleDateString()}</div>
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--green-600)', flexShrink: 0 }}>${Number(r.budget || 0).toLocaleString()}</div>
+                <div style={{ fontSize: 11, padding: '2px 8px', borderRadius: 20, background: u.stripe_account_id ? '#dcfce7' : '#fee2e2', color: u.stripe_account_id ? '#16a34a' : '#dc2626', fontWeight: 500, flexShrink: 0 }}>
+                  {u.stripe_account_id ? 'Stripe ✓' : 'No Stripe'}
+                </div>
               </div>
             ))}
+            {users.filter(u => u.role === 'seller').length === 0 && (
+              <div style={{ padding: '24px', textAlign: 'center', color: 'var(--slate-400)', fontSize: 13 }}>No vendors yet</div>
+            )}
           </div>
         </div>
       </div>
