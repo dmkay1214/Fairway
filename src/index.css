@@ -111,3 +111,28 @@ input, select, textarea {
 .stagger > *:nth-child(6) { animation-delay: .24s; }
 .stagger > *:nth-child(7) { animation-delay: .28s; }
 .stagger > *:nth-child(8) { animation-delay: .32s; }
+
+/* ─── Mobile Responsive ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Main content padding */
+  .app-main { padding: 16px !important; padding-bottom: 72px !important; }
+
+  /* Show mobile nav */
+  .mobile-nav { display: flex !important; }
+
+  /* Metric cards - 2 columns on mobile */
+  .metric-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+
+  /* Hide search in topbar */
+  .topbar-search { display: none !important; }
+
+  /* Hide duplicate post request button in header */
+  .page-header-action { display: none !important; }
+
+  /* Full width cards */
+  .card { border-radius: 12px !important; }
+
+  /* Prevent horizontal overflow */
+  body { overflow-x: hidden !important; }
+  #root { overflow-x: hidden !important; }
+}
