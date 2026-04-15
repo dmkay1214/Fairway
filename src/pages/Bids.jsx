@@ -46,6 +46,7 @@ export default function Bids() {
         await supabase.from('bids').update({status:'awarded'}).eq('id', bid.id)
         await supabase.from('requests').update({status:'awarded',awarded_bid_id:bid.id,awarded_amount:bid.amount}).eq('id', req.id)
         await supabase.from('orders').insert({request_id:req.id,bid_id:bid.id,status:'processing'})
+        await supabase.functions.invoke('send-email', { body: { type: 'bid_awarded', bidId: bid.id, requestId: req.id } })
         // Redirect to Stripe checkout
         window.location.href = data.url
       } else {
@@ -53,6 +54,7 @@ export default function Bids() {
         await supabase.from('bids').update({status:'awarded'}).eq('id', bid.id)
         await supabase.from('requests').update({status:'awarded',awarded_bid_id:bid.id,awarded_amount:bid.amount}).eq('id', req.id)
         await supabase.from('orders').insert({request_id:req.id,bid_id:bid.id,status:'processing'})
+        await supabase.functions.invoke('send-email', { body: { type: 'bid_awarded', bidId: bid.id, requestId: req.id } })
         setAwarded(a => ({...a,[req.id]:bid.id}))
         setRequests(rs => rs.filter(r => r.id !== req.id))
         alert('Bid awarded! Note: vendor has not connected their payment account yet.')
