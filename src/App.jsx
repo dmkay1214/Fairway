@@ -123,10 +123,7 @@ export default function App() {
     const userRole = profile?.role || sessionUser?.user_metadata?.role || 'buyer'
     setRole(userRole)
     setUser(sessionUser)
-    if (userRole === 'seller') { setScreen('app'); return }
-    const { data } = await supabase.from('memberships').select('plan_id, status').eq('user_id', sessionUser.id).single()
-    const isPaid = data?.plan_id === 'buyer_pro' && data?.status === 'active'
-    setScreen(isPaid ? 'app' : 'paywall')
+    setScreen('app')
   }
 
   useEffect(() => {
