@@ -120,6 +120,7 @@ export function Vendors() {
   const [vendors, setVendors] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
+  const [stateFilter, setStateFilter] = useState('all')
   useEffect(() => {
     supabase.from('profiles').select('*').eq('role','seller').order('created_at',{ascending:false}).then(({data}) => {
       setVendors(data||[])
@@ -127,10 +128,17 @@ export function Vendors() {
     })
   }, [])
   const cats = ['all', ...new Set(vendors.flatMap(v=>v.categories||[]))]
-  const shown = filter==='all' ? vendors : vendors.filter(v=>v.categories?.includes(filter))
+  const getState = (loc) => { if (!loc) return ''; const p = loc.split(','); return (p[p.length-1]||'').trim(); }
+  const states = ['all', ...new Set(vendors.map(v => getState(v.location)).filter(Boolean))]
+  const shown = vendors.filter(v => (filter==='all'||v.categories?.includes(filter)) && (stateFilter==='all'||getState(v.location)===stateFilter))
   return (
     <div className="fade-in">
       <PageHeader title="Vendor Directory" subtitle={vendors.length + ' vendors'} />
+      <div style={{display:'flex',gap:8,marginBottom:12,flexWrap:'wrap'}}>
+        <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} style={{padding:'6px 12px',borderRadius:'var(--radius-full)',border:'1px solid var(--slate-200)',fontSize:12,fontFamily:'var(--font-body)',outline:'none',background:'white',cursor:'pointer'}}>
+          {states.map(s => <option key={s} value={s}>{s==='all'?'All locations':s}</option>)}
+        </select>
+      </div>
       <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
         {cats.map(c=>{
           const cat=CATEGORIES.find(x=>x.id===c)
