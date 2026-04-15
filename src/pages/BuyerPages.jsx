@@ -120,6 +120,7 @@ export function Vendors() {
   const [vendors, setVendors] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
+  const [stateFilter, setStateFilter] = useState('all')
   useEffect(() => {
     supabase.from('profiles').select('*').eq('role','seller').order('created_at',{ascending:false}).then(({data}) => {
       setVendors(data||[])
@@ -127,7 +128,17 @@ export function Vendors() {
     })
   }, [])
   const cats = ['all', ...new Set(vendors.flatMap(v=>v.categories||[]))]
-  const shown = filter==='all' ? vendors : vendors.filter(v=>v.categories?.includes(filter))
+  const getState = (location) => {
+    if (!location) return ''
+    const parts = location.split(',')
+    return parts[parts.length - 1]?.trim() || ''
+  }
+  const states = ['all', ...new Set(vendors.map(v => getState(v.location)).filter(Boolean))]
+  const shown = vendors.filter(v => {
+    const categoryMatch = filter === 'all' || v.categories?.includes(filter)
+    const stateMatch = stateFilter === 'all' || getState(v.location) === stateFilter
+    return categoryMatch && stateMatch
+  })
   return (
     <div className="fade-in">
       <PageHeader title="Vendor Directory" subtitle={vendors.length + ' vendors'} />
