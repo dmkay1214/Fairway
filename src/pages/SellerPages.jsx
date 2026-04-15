@@ -11,6 +11,7 @@ export function SellerOpportunities() {
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
+  const [stateFilter, setStateFilter] = useState('all')
   const [myBids, setMyBids] = useState([])
 
   useEffect(() => {
