@@ -13,6 +13,7 @@ export default function Bids() {
   const [loading, setLoading] = useState(true)
   const [awarding, setAwarding] = useState(null)
   const [awarded, setAwarded] = useState({})
+  const [locationFilter, setLocationFilter] = useState('all')
 
   useEffect(() => {
     supabase.auth.getUser().then(({data:{user}}) => {
@@ -31,6 +32,8 @@ export default function Bids() {
   }, [selectedId])
 
   const req = requests.find(r => r.id === selectedId)
+  const locations = ['all', ...new Set(bids.map(b => (b.vendor?.location||'').trim()).filter(Boolean))]
+  const shownBids = locationFilter === 'all' ? bids : bids.filter(b => (b.vendor?.location||'').trim() === locationFilter)
 
   async function handleAward(bid) {
     if (req === undefined || req === null) { alert('No request selected'); return }
