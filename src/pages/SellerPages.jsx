@@ -28,11 +28,18 @@ export function SellerOpportunities() {
   }, [])
 
   const cats = ['all', ...new Set(requests.map(r => r.category).filter(Boolean))]
-  const shown = filter === 'all' ? requests : requests.filter(r => r.category === filter)
+  const getState = (loc) => { if (!loc) return ''; const p = loc.split(','); return (p[p.length-1]||'').trim(); }
+  const allStates = ['all', ...new Set(requests.map(r => getState(r.buyer?.location||r.location)).filter(Boolean))]
+  const shown = requests.filter(r => (filter==='all'||r.category===filter) && (stateFilter==='all'||getState(r.buyer?.location||r.location)===stateFilter))
 
   return (
     <div className="fade-in">
       <PageHeader title="Opportunities" subtitle="Open requests from clubs looking for vendors" />
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+        <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} style={{padding:'6px 12px',borderRadius:'var(--radius-full)',border:'1px solid var(--slate-200)',fontSize:12,fontFamily:'var(--font-body)',outline:'none',background:'white',cursor:'pointer'}}>
+          {allStates.map(s => <option key={s} value={s}>{s==='all'?'All locations':s}</option>)}
+        </select>
+      </div>
       <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
         {cats.map(c => {
           const cat = CATEGORIES.find(x => x.id === c)
