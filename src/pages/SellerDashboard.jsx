@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, Badge, Btn, PageHeader, EmptyState, MetricCard } from '../components/UI.jsx'
 import { supabase } from '../lib/supabase.js'
+import VendorOnboarding from '../components/VendorOnboarding.jsx'
 import { CATEGORIES } from '../lib/data.js'
 
 const fmt = n => '$' + Number(n || 0).toLocaleString()
@@ -39,6 +40,7 @@ export default function SellerDashboard() {
 
   return (
     <div className="fade-in">
+      <VendorOnboarding />
       <PageHeader title={`${greeting}, ${name}`} subtitle={`${orgName} · Vendor Portal`} actions={<Btn variant="primary" onClick={() => navigate('/seller')}>Browse opportunities →</Btn>} />
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:24}}>
         <MetricCard label="Open opportunities" value={opportunities.length} sub="Accepting bids" subColor="var(--blue-500)" />
