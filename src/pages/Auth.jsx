@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { signIn, signUp, resetPassword } from '../lib/supabase.js'
+import { signIn, signUp, resetPassword, supabase } from '../lib/supabase.js'
 
 const inputStyle = {
   width: '100%', padding: '10px 13px',
