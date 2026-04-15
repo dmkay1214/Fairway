@@ -149,7 +149,7 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
       }}>
         {[
           { value: '$84K+', label: 'Avg annual savings per club' },
-          { value: '', label: '' },
+          
           { value: '18.4%', label: 'Average discount rate' },
           { value: '4.8', label: 'Avg bids per request' },
         ].map((s, i) => (
