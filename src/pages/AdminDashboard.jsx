@@ -43,7 +43,7 @@ export default function AdminDashboard() {
       const buyers = (profiles || []).filter(p => p.role === 'buyer').length
       const vendors = (profiles || []).filter(p => p.role === 'seller').length
       const totalVolume = (ordersData || []).reduce((sum, o) => sum + (o.bid?.amount || 0), 0)
-      const fairwayRevenue = totalVolume * 0.03
+      const fairwayRevenue = totalVolume * 0.05
 
       setStats({ buyers, vendors, totalRequests: (reqs || []).length, totalBids: (bidsData || []).length, totalVolume, fairwayRevenue })
       setLoading(false)
