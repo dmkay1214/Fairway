@@ -149,7 +149,7 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
       }}>
         {[
           { value: '$84K+', label: 'Avg annual savings per club' },
-          { value: '312', label: 'Verified vendors' },
+          { value: '', label: '' },
           { value: '18.4%', label: 'Average discount rate' },
           { value: '4.8', label: 'Avg bids per request' },
         ].map((s, i) => (
@@ -171,7 +171,7 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
         {[
           { icon: '⛱', title: 'Post any need', desc: 'Sand, machinery, labor, chemicals — post in 60 seconds and vendors compete for your business.' },
           { icon: '💰', title: 'Transparent pricing', desc: 'Every bid shows exact savings vs your budget. No hidden fees, no relationship markup.' },
-          { icon: '✓', title: 'Verified vendors', desc: 'Every vendor is vetted, insured, and rated by other clubs. Quality you can trust at prices that save.' },
+          { icon: '✓', title: '', desc: 'Every vendor is vetted, insured, and rated by other clubs. Quality you can trust at prices that save.' },
         ].map((f, i) => (
           <div key={i} style={{
             background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)',
