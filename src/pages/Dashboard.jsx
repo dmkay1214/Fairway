@@ -48,7 +48,7 @@ export default function Dashboard({ onNewRequest }) {
         subtitle={[orgName, location].filter(Boolean).join(' · ')}
         actions={<Btn variant="primary" onClick={onNewRequest}>+ Post Request</Btn>}
       />
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:14,marginBottom:24}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:24}}>
         <MetricCard label="Active requests" value={active.length} sub={active.length > 0 ? 'Receiving bids' : 'Post a request to start'} />
         <MetricCard label="Total requests" value={requests.length} sub="All time" subColor="var(--slate-400)" />
         <MetricCard label="Platform" value="Fairway" sub="Golf procurement marketplace" subColor="var(--slate-400)" />

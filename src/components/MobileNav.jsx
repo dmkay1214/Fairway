@@ -4,23 +4,20 @@ import { useNavigate, useLocation } from 'react-router-dom'
 export default function MobileNav({ role }) {
   const navigate = useNavigate()
   const location = useLocation()
-  const isMobile = window.innerWidth <= 768
-
-  if (!isMobile) return null
 
   const buyerItems = [
     { path: '/dashboard', icon: '🏠', label: 'Home' },
     { path: '/requests', icon: '📋', label: 'Requests' },
     { path: '/bids', icon: '⚡', label: 'Bids' },
     { path: '/orders', icon: '📦', label: 'Orders' },
-    { path: '/settings', icon: '⚙️', label: 'Settings' },
+    { path: '/settings', icon: '⚙️', label: 'More' },
   ]
   const sellerItems = [
     { path: '/seller/dashboard', icon: '🏠', label: 'Home' },
     { path: '/seller', icon: '🔍', label: 'Browse' },
     { path: '/seller/bids', icon: '⚡', label: 'Bids' },
     { path: '/seller/profile', icon: '👤', label: 'Profile' },
-    { path: '/settings', icon: '⚙️', label: 'Settings' },
+    { path: '/settings', icon: '⚙️', label: 'More' },
   ]
   const items = role === 'buyer' ? buyerItems : sellerItems
 
@@ -28,11 +25,12 @@ export default function MobileNav({ role }) {
     <div style={{
       position: 'fixed', bottom: 0, left: 0, right: 0,
       background: 'white', borderTop: '1px solid #e2e8f0',
-      display: 'flex', zIndex: 9999, paddingBottom: 'env(safe-area-inset-bottom)',
+      display: 'flex', zIndex: 9999,
+      paddingBottom: 'env(safe-area-inset-bottom)',
     }}>
       {items.map(item => {
         const active = location.pathname === item.path ||
-          (item.path.length > 1 && location.pathname.startsWith(item.path))
+          (item.path.length > 8 && location.pathname.startsWith(item.path))
         return (
           <button key={item.path} onClick={() => navigate(item.path)} style={{
             flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
