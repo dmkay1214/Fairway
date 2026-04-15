@@ -183,6 +183,14 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
           </div>
         ))}
       </div>
+
+      <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', padding: '24px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,.3)' }}>© 2026 Fairway Procurement LLC. All rights reserved.</div>
+        <div style={{ display: 'flex', gap: 20 }}>
+          <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=6fc1aefa-fb21-4bdd-a989-0927eddf138f" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'rgba(255,255,255,.4)', textDecoration: 'none' }}>Privacy Policy</a>
+          <a href="https://app.termly.io/policy-viewer/policy.html?policyUUID=7d3fcb96-f4c1-45ee-bb23-55494b26b0d2" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'rgba(255,255,255,.4)', textDecoration: 'none' }}>Terms of Service</a>
+        </div>
+      </div>
     </div>
   )
 }
