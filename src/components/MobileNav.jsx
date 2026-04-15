@@ -27,6 +27,7 @@ export default function MobileNav({ role }) {
       background: 'white', borderTop: '1px solid #e2e8f0',
       display: 'flex', zIndex: 9999,
       paddingBottom: 'env(safe-area-inset-bottom)',
+      boxShadow: '0 -2px 10px rgba(0,0,0,0.05)',
     }}>
       {items.map(item => {
         const active = location.pathname === item.path ||
