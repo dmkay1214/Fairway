@@ -11,10 +11,9 @@ import Requests from './pages/Requests.jsx'
 import Bids from './pages/Bids.jsx'
 import { Orders, Savings, Vendors } from './pages/BuyerPages.jsx'
 import { SellerOpportunities, SellerProfile } from './pages/SellerPages.jsx'
-import SubmitBid from './pages/SubmitBid.jsx'
 import SellerDashboard from './pages/SellerDashboard.jsx'
+import SubmitBid from './pages/SubmitBid.jsx'
 import Settings from './pages/Settings.jsx'
-import Admin from './pages/Admin.jsx'
 import Pricing from './pages/Pricing.jsx'
 
 function LoadingScreen() {
@@ -26,64 +25,14 @@ function LoadingScreen() {
   )
 }
 
-function PaywallScreen({ user, onSignOut }) {
-  const [loading, setLoading] = useState(false)
-  async function handleCheckout() {
-    setLoading(true)
-    const { data, error } = await supabase.functions.invoke('create-checkout', {
-      body: { priceId: 'price_1TLoZpKSFMa1JWApWkk7Crnk', userId: user.id, email: user.email, planName: 'Pro Club' }
-    })
-    if (data?.url) window.location.href = data.url
-    else { alert('Error: ' + (error?.message || 'Unknown')); setLoading(false) }
-  }
-  return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <div style={{ marginBottom: 28, display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ width: 36, height: 36, borderRadius: 9, background: 'var(--green-500)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17 }}>⛳</div>
-        <span style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'white' }}>Fairway</span>
-      </div>
-      <div style={{ width: '100%', maxWidth: 480, background: '#141414', borderRadius: 20, padding: '36px', border: '1px solid #222', textAlign: 'center' }}>
-        <div style={{ fontSize: 40, marginBottom: 16 }}>🏌️</div>
-        <div style={{ fontSize: 22, fontFamily: 'var(--font-display)', color: 'white', marginBottom: 8 }}>Welcome to Fairway</div>
-        <div style={{ fontSize: 14, color: '#666', marginBottom: 28, lineHeight: 1.7 }}>
-          Access to the Club Portal requires an active Pro Club subscription.<br />Start saving 18–35% on your course procurement today.
-        </div>
-        <div style={{ background: '#0d2318', border: '1.5px solid var(--green-500)', borderRadius: 14, padding: '20px 24px', marginBottom: 24, textAlign: 'left' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-            <div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: 'white' }}>Pro Club</div>
-              <div style={{ fontSize: 12, color: 'var(--green-600)', marginTop: 2 }}>Full platform access</div>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 24, fontWeight: 700, color: 'white' }}>$1,000</div>
-              <div style={{ fontSize: 11, color: '#555' }}>/month</div>
-            </div>
-          </div>
-          {['Unlimited procurement requests', 'Competing bids from verified vendors', 'Full savings & analytics reporting', 'Complete vendor directory access', 'Priority support'].map(f => (
-            <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 7 }}>
-              <span style={{ color: 'var(--green-400)', fontSize: 12 }}>✓</span>
-              <span style={{ fontSize: 13, color: '#aaa' }}>{f}</span>
-            </div>
-          ))}
-        </div>
-        <button onClick={handleCheckout} disabled={loading} style={{ width: '100%', padding: '14px', borderRadius: 12, border: 'none', background: loading ? '#333' : 'var(--green-600)', color: 'white', fontSize: 15, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-body)', marginBottom: 12 }}>
-          {loading ? 'Redirecting to checkout...' : 'Subscribe — $1,000/month →'}
-        </button>
-        <div style={{ fontSize: 11, color: '#444', marginBottom: 16 }}>Cancel anytime. Billed monthly via Stripe.</div>
-        <button onClick={onSignOut} style={{ background: 'none', border: 'none', color: '#555', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>Sign out</button>
-      </div>
-    </div>
-  )
-}
-
 function AppShell({ role, user, onSignOut }) {
   const [newRequestOpen, setNewRequestOpen] = useState(false)
   const userName = user?.user_metadata?.full_name || 'User'
   const orgName = user?.user_metadata?.org_name || (role === 'buyer' ? 'My Club' : 'My Company')
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      {window.innerWidth > 768 && <div style={{ flexShrink: 0 }}><Sidebar role={role} onRoleToggle={() => {}} /></div>}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Sidebar role={role} onRoleToggle={() => {}} />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
         <TopBar role={role} onNewRequest={() => setNewRequestOpen(true)} userName={userName} orgName={orgName} onSignOut={onSignOut} />
         <main style={{ flex: 1, overflowY: 'auto', padding: '28px 32px' }}>
           <Routes>
@@ -122,9 +71,6 @@ export default function App() {
     setRole(userRole)
     setUser(sessionUser)
     setScreen('app')
-  }Role(userRole)
-    setUser(sessionUser)
-    setScreen('app')
   }
 
   useEffect(() => {
@@ -149,7 +95,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      {screen === 'landing' && <Landing onEnter={() => {}} onLogin={() => setScreen('login')} onSignUp={(r) => { setSignupRole(r); setScreen('signup') }} />}
+      {screen === 'landing' && <Landing onEnter={() => {}} onLogin={() => setScreen('login')} onSignUp={(r) => { setSignupRole(r || 'buyer'); setScreen('signup') }} />}
       {screen === 'login' && <Login onLogin={(r, u) => checkAccess(u)} onSignUp={() => setScreen('signup')} onForgot={() => setScreen('forgot')} />}
       {screen === 'signup' && <SignUp initialRole={signupRole} onSignUp={(r, u) => checkAccess(u)} onLogin={() => setScreen('login')} />}
       {screen === 'forgot' && <ForgotPassword onBack={() => setScreen('login')} />}
@@ -161,4 +107,3 @@ export default function App() {
     </BrowserRouter>
   )
 }
-// force 1776196566
