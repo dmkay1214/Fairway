@@ -152,7 +152,6 @@ export default function App() {
       {screen === 'login' && <Login onLogin={(r, u) => checkAccess(u)} onSignUp={() => setScreen('signup')} onForgot={() => setScreen('forgot')} />}
       {screen === 'signup' && <SignUp initialRole={signupRole} onSignUp={(r, u) => checkAccess(u)} onLogin={() => setScreen('login')} />}
       {screen === 'forgot' && <ForgotPassword onBack={() => setScreen('login')} />}
-      {screen === 'paywall' && <PaywallScreen user={user} onSignOut={handleSignOut} />}
       {screen === 'app' && (
         <Routes>
           <Route path="/*" element={<AppShell role={role} user={user} onSignOut={handleSignOut} />} />
