@@ -128,7 +128,7 @@ export function Vendors() {
     })
   }, [])
   const cats = ['all', ...new Set(vendors.flatMap(v=>v.categories||[]))]
-  const getState = (loc) => { if (!loc) return ''; const p = loc.split(','); return (p[p.length-1]||'').trim(); }
+  const getState = (loc) => (loc||'').trim()
   const states = ['all', ...new Set(vendors.map(v => getState(v.location)).filter(Boolean))]
   const shown = vendors.filter(v => (filter==='all'||v.categories?.includes(filter)) && (stateFilter==='all'||getState(v.location)===stateFilter))
   return (
