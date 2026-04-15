@@ -13,6 +13,7 @@ export default function Bids() {
   const [loading, setLoading] = useState(true)
   const [awarding, setAwarding] = useState(null)
   const [awarded, setAwarded] = useState({})
+  const [locationFilter, setLocationFilter] = useState('all')
 
   useEffect(() => {
     supabase.auth.getUser().then(({data:{user}}) => {
@@ -30,6 +31,9 @@ export default function Bids() {
     supabase.from('bids').select('*, vendor:profiles(org_name,location,rating)').eq('request_id',selectedId).order('amount',{ascending:true}).then(({data}) => setBids(data||[]))
   }, [selectedId])
 
+  const getState = (loc) => (loc||'').trim()
+  const locations = ['all', ...new Set(bids.map(b => getState(b.vendor?.location)).filter(Boolean))]
+  const filteredBids = bids.filter(b => locationFilter === 'all' || getState(b.vendor?.location) === locationFilter)
   const req = requests.find(r => r.id === selectedId)
 
   async function handleAward(bid) {
@@ -106,6 +110,17 @@ export default function Bids() {
         const savings = (req?.budget||0) - bid.amount
         const isAwarded = awarded[req?.id] === bid.id
         const initials = (bid.vendor?.org_name||'V').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()
+        return null // placeholder
+      })}
+      {bids.length > 0 && (
+        <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
+          <span style={{fontSize:12,color:'var(--slate-500)',fontWeight:500}}>Filter by vendor location:</span>
+          <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} style={{padding:'6px 12px',borderRadius:'var(--radius-full)',border:'1px solid var(--slate-200)',fontSize:12,fontFamily:'var(--font-body)',outline:'none',background:'white',cursor:'pointer'}}>
+            {locations.map(s => <option key={s} value={s}>{s==='all'?'All locations':s}</option>)}
+          </select>
+        </div>
+      )}
+      {filteredBids.map(bid => {
         return (
           <Card key={bid.id} style={{padding:'18px 20px',marginBottom:12,border:isLowest?'2px solid var(--green-400)':'1px solid var(--slate-100)'}}>
             <div style={{display:'flex',gap:14,alignItems:'center'}}>
