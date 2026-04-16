@@ -62,7 +62,7 @@ export default function SellerDashboard() {
             const cat = CATEGORIES.find(c => c.id === req.category)
             const bidCount = req.bids?.[0]?.count || 0
             return (
-              <div key={req.id} onClick={() => navigate('/seller')} style={{display:'flex',gap:12,padding:'14px 20px',borderBottom:'1px solid var(--slate-50)',cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.background='var(--slate-50)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+              <div key={req.id} onClick={() => navigate('/seller/bid/'+req.id)} style={{display:'flex',gap:12,padding:'14px 20px',borderBottom:'1px solid var(--slate-50)',cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.background='var(--slate-50)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                 <div style={{width:36,height:36,borderRadius:8,background:(cat?.color||'#888')+'18',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,flexShrink:0}}>{cat?.icon||'📦'}</div>
                 <div style={{flex:1,minWidth:0}}>
                   <div style={{fontSize:13,fontWeight:500,marginBottom:2,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{req.title}</div>

@@ -39,7 +39,7 @@ export function Orders() {
         const statusMap = {processing:{l:'Processing',v:'warning'},in_transit:{l:'In transit',v:'info'},active:{l:'Active',v:'success'},delivered:{l:'Delivered',v:'default'}}
         const si = statusMap[o.status]||{l:o.status,v:'default'}
         return (
-          <Card key={o.id} style={{padding:'16px 20px',marginBottom:10}}>
+          <Card key={o.id} onClick={() => navigate('/orders/'+o.id)} style={{padding:'16px 20px',marginBottom:10,cursor:'pointer'}}>
             <div style={{display:'flex',gap:14,alignItems:'center'}}>
               <div style={{width:40,height:40,borderRadius:8,background:(cat?.color||'#888')+'18',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>{cat?.icon||'📦'}</div>
               <div style={{flex:1}}>
