@@ -55,6 +55,16 @@ export default function SubmitBid() {
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--slate-400)' }}>Loading...</div>
   if (!request) return <div style={{ padding: 40, textAlign: 'center' }}>Request not found</div>
 
+  const isClosed = request.status === 'closed' || request.status === 'awarded' || (request.close_date && new Date(request.close_date) < new Date())
+  if (isClosed) return (
+    <div className="fade-in" style={{ maxWidth: 520, margin: '60px auto', textAlign: 'center', padding: 24 }}>
+      <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
+      <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>This request is closed</div>
+      <div style={{ fontSize: 14, color: 'var(--slate-500)', marginBottom: 24 }}>This procurement request is no longer accepting bids.</div>
+      <button onClick={() => navigate('/seller')} style={{ padding: '11px 24px', background: '#16a34a', color: 'white', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Browse open requests</button>
+    </div>
+  )
+
   if (submitted) return (
     <div className="fade-in" style={{ maxWidth: 520, margin: '60px auto', textAlign: 'center', padding: 24 }}>
       <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
