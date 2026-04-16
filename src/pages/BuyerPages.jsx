@@ -43,7 +43,9 @@ export function Orders() {
               <div style={{width:40,height:40,borderRadius:8,background:(cat?.color||'#888')+'18',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>{cat?.icon||'📦'}</div>
               <div style={{flex:1}}>
                 <div style={{fontSize:14,fontWeight:600,marginBottom:2}}>{o.request?.title||'Order'}</div>
-                <div style={{fontSize:12,color:'var(--slate-400)'}}>{o.bid?.vendor?.org_name||'Vendor'}</div>
+                <div style={{fontSize:12,color:'var(--slate-400)',marginBottom:4}}>{o.bid?.vendor?.org_name||'Vendor'}</div>
+                {o.bid?.vendor?.phone && <div style={{fontSize:12,marginBottom:2}}>📞 <a href={'tel:'+o.bid.vendor.phone} style={{color:'var(--green-600)',textDecoration:'none'}}>{o.bid.vendor.phone}</a></div>}
+                {o.bid?.vendor?.contact_email && <div style={{fontSize:12}}>✉️ <a href={'mailto:'+o.bid.vendor.contact_email} style={{color:'var(--green-600)',textDecoration:'none'}}>{o.bid.vendor.contact_email}</a></div>}
               </div>
               <div style={{display:'flex',gap:20,alignItems:'center'}}>
                 <div style={{textAlign:'right'}}>
