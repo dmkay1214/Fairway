@@ -193,6 +193,11 @@ export function SellerProfile() {
                 {connecting ? 'Redirecting to Stripe...' : '⚡ Connect Stripe account'}
               </button>
             )}
+            {stripeConnected && (
+              <button onClick={handleConnectStripe} disabled={connecting} style={{display:'flex',alignItems:'center',gap:8,padding:'8px 14px',background:'none',border:'1px solid var(--slate-200)',borderRadius:8,fontSize:12,color:'var(--slate-500)',cursor:connecting?'not-allowed':'pointer',fontFamily:'var(--font-body)',marginTop:8}}>
+                {connecting ? 'Redirecting...' : '🔄 Update Stripe account'}
+              </button>
+            )}
           </div>
         </div>
       </Card>
