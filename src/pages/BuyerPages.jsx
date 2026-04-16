@@ -48,7 +48,7 @@ export function Orders() {
                   {o.bid?.vendor?.phone && <div style={{fontSize:12,marginBottom:2}}>📞 <a href={'tel:'+o.bid.vendor.phone} style={{color:'var(--green-600)',textDecoration:'none'}}>{o.bid.vendor.phone}</a></div>}
                   {o.bid?.vendor?.contact_email && <div style={{fontSize:12}}>✉️ <a href={'mailto:'+o.bid.vendor.contact_email} style={{color:'var(--green-600)',textDecoration:'none'}}>{o.bid.vendor.contact_email}</a></div>}
                 </>) : (
-                  <div style={{fontSize:11,color:'var(--slate-400)',fontStyle:'italic',marginTop:2}}>Contact info provided after payment</div>
+                  <div style={{fontSize:11,color:'var(--slate-400)',fontStyle:'italic',marginTop:2}}>Contact info revealed after transaction to coordinate shipping & handling</div>
                 )}
               </div>
               <div style={{display:'flex',gap:20,alignItems:'center'}}>
