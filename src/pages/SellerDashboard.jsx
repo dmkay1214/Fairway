@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, Badge, Btn, PageHeader, EmptyState, MetricCard } from '../components/UI.jsx'
 import { supabase } from '../lib/supabase.js'
+
+const STATUS_FLOW = { processing: 'confirmed', confirmed: 'scheduled', scheduled: 'delivered' }
+const STATUS_LABELS = { processing: 'Confirm order', confirmed: 'Mark scheduled', scheduled: 'Mark delivered', delivered: null }
 import VendorOnboarding from '../components/VendorOnboarding.jsx'
 import { CATEGORIES } from '../lib/data.js'
 

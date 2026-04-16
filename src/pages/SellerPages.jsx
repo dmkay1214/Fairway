@@ -80,14 +80,14 @@ export function SellerOpportunities() {
 export function SellerProfile() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [form, setForm] = useState({ org_name: '', location: '', categories: [], service_radius: 100 })
+  const [form, setForm] = useState({ org_name: '', location: '', categories: [], service_radius: 100, phone: '' })
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
   useEffect(() => {
     supabase.auth.getUser().then(({data:{user}}) => {
       if (!user) return
       supabase.from('profiles').select('*').eq('id', user.id).single().then(({data}) => {
-        setForm({ org_name: data?.org_name||'', location: data?.location||'', categories: data?.categories||[], service_radius: data?.service_radius||100 })
+        setForm({ org_name: data?.org_name||'', location: data?.location||'', categories: data?.categories||[], service_radius: data?.service_radius||100, phone: data?.phone||'' })
         setLoading(false)
       })
     })
@@ -139,7 +139,7 @@ export function SellerProfile() {
   async function handleSave() {
     setSaving(true)
     const {data:{user}} = await supabase.auth.getUser()
-    await supabase.from('profiles').update({ org_name: form.org_name, location: form.location, categories: form.categories, service_radius: form.service_radius }).eq('id', user.id)
+    await supabase.from('profiles').update({ org_name: form.org_name, location: form.location, categories: form.categories, service_radius: form.service_radius, phone: form.phone }).eq('id', user.id)
     setSaving(false)
     alert('Profile saved!')
   }
@@ -158,6 +158,10 @@ export function SellerProfile() {
           <div>
             <label style={{fontSize:12,fontWeight:500,color:'var(--slate-500)',display:'block',marginBottom:6}}>Location</label>
             <input value={form.location} onChange={e=>set('location',e.target.value)} style={{width:'100%',padding:'10px 12px',border:'1px solid var(--slate-200)',borderRadius:8,fontSize:14,fontFamily:'var(--font-body)',outline:'none'}} placeholder="Naples, FL" />
+          </div>
+          <div>
+            <div style={{fontSize:12,fontWeight:500,color:'var(--slate-500)',marginBottom:5}}>Phone number</div>
+            <input value={form.phone} onChange={e=>set('phone',e.target.value)} style={{width:'100%',padding:'10px 12px',border:'1px solid var(--slate-200)',borderRadius:8,fontSize:14,fontFamily:'var(--font-body)',outline:'none'}} placeholder="(555) 555-5555" />
           </div>
           <div>
             <div style={{fontSize:12,fontWeight:500,color:'var(--slate-500)',marginBottom:5}}>Service radius</div>
