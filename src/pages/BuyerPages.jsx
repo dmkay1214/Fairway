@@ -61,7 +61,7 @@ export function Orders() {
                 <Badge variant={si.v}>{si.l}</Badge>
               </div>
             </div>
-          </Card>
+          </div>
         )
       })}
     </div>
