@@ -58,7 +58,7 @@ export function Btn({ children, variant = 'default', size = 'md', onClick, disab
   )
 }
 
-export function Card({ children, style = {}, className = '' }) {
+export function Card({ children, style = {}, className = '', onClick }) {
   return (
     <div className={className} style={{
       background: 'white',
