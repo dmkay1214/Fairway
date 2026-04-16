@@ -12,7 +12,7 @@ export function Orders() {
   useEffect(() => {
     supabase.auth.getUser().then(({data:{user}}) => {
       if (!user) return
-      supabase.from('orders').select('*, request:requests(title,category,budget,buyer_id), bid:bids(amount, vendor:profiles(org_name))').order('created_at',{ascending:false}).then(({data}) => {
+      supabase.from('orders').select('*, request:requests(title,category,budget,buyer_id), bid:bids(amount, vendor:profiles(org_name,phone,contact_email,full_name))').order('created_at',{ascending:false}).then(({data}) => {
         setOrders((data||[]).filter(o=>o.request?.buyer_id===user.id))
         setLoading(false)
       })
