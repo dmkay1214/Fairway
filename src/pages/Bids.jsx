@@ -150,11 +150,12 @@ export default function Bids() {
               <div style={{textAlign:'right'}}>
                 <div style={{fontSize:24,fontWeight:700}}>{fmt(bid.amount)}</div>
                 {savings > 0 && <div style={{fontSize:12,color:'var(--green-600)',marginBottom:8}}>Save {fmt(savings)}</div>}
-                {!isAwarded && !awarded[req?.id] && (
+                {!isAwarded && !awarded[req?.id] && (<>
+                  <div style={{fontSize:10,color:'var(--slate-400)',marginBottom:6,textAlign:'right',lineHeight:1.4}}>Contact info revealed after<br/>transaction to coordinate<br/>shipping & handling</div>
                   <Btn variant={isLowest?'primary':'default'} size="sm" disabled={awarding===bid.id} onClick={() => handleAward(bid)}>
                     {awarding===bid.id?'Awarding...':'Award bid'}
                   </Btn>
-                )}
+                </>)}
               </div>
             </div>
           </Card>
