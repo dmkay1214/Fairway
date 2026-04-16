@@ -21,7 +21,7 @@ export default function OrderDetail({ role }) {
   useEffect(() => {
     supabase.from('orders')
       .select('*, request:requests(title, description, category, budget, close_date, location, buyer:profiles(org_name, location, full_name)), bid:bids(amount, notes, delivery_days, vendor:profiles(org_name, full_name, location, phone, contact_email, stripe_account_id))')
-      .eq('id', id)
+      .or(`id.eq.${id},bid_id.eq.${id}`)
       .single()
       .then(({ data }) => {
         setOrder(data)
