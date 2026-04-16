@@ -7,6 +7,7 @@ import { CATEGORIES } from '../lib/data.js'
 const fmt = n => '$' + Number(n||0).toLocaleString()
 
 export function Orders() {
+  const navigate = useNavigate()
   const [tab, setTab] = useState('active')
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
