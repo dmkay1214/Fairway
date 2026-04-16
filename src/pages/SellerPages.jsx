@@ -121,10 +121,11 @@ export function SellerProfile() {
         body: { userId: user.id, email: user.email }
       })
       if (data?.url && data?.accountId) {
-        const { error: updateError } = await supabase.from('profiles').update({ stripe_account_id: data.accountId }).eq('id', user.id)
-        console.log('Stripe account saved:', data.accountId, 'Error:', updateError)
-        // Small delay to ensure save completes
-        await new Promise(resolve => setTimeout(resolve, 500))
+        // Only save if no existing account ID
+        const { data: prof } = await supabase.from('profiles').select('stripe_account_id').eq('id', user.id).single()
+        if (!prof?.stripe_account_id) {
+          await supabase.from('profiles').update({ stripe_account_id: data.accountId }).eq('id', user.id)
+        }
         window.location.href = data.url
       } else {
         throw new Error(error?.message || 'Failed to create Stripe account')
