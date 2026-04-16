@@ -20,6 +20,8 @@ export default function Bids() {
           await supabase.from('bids').update({ status: 'awarded' }).eq('id', bidId)
           await supabase.from('requests').update({ status: 'awarded', awarded_bid_id: bidId }).eq('id', reqId)
           await supabase.from('orders').update({ status: 'paid' }).eq('bid_id', bidId)
+          // Remove awarded request from list
+          setRequests(rs => rs.filter(r => r.id !== reqId))
         }
       }
     }
