@@ -9,6 +9,22 @@ export default function Bids() {
   const [params] = useSearchParams()
   const [requests, setRequests] = useState([])
   const [selectedId, setSelectedId] = useState(params.get('req'))
+  const [paymentSuccess, setPaymentSuccess] = useState(params.get('payment') === 'success')
+
+  useEffect(() => {
+    async function handlePaymentSuccess() {
+      if (params.get('payment') === 'success') {
+        const bidId = params.get('bid')
+        const reqId = params.get('req')
+        if (bidId && reqId) {
+          await supabase.from('bids').update({ status: 'awarded' }).eq('id', bidId)
+          await supabase.from('requests').update({ status: 'awarded', awarded_bid_id: bidId }).eq('id', reqId)
+          await supabase.from('orders').update({ status: 'paid' }).eq('bid_id', bidId)
+        }
+      }
+    }
+    handlePaymentSuccess()
+  }, [])
   const [bids, setBids] = useState([])
   const [loading, setLoading] = useState(true)
   const [awarding, setAwarding] = useState(null)
