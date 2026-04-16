@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Card, Badge, PageHeader, MetricCard, Tabs, EmptyState } from '../components/UI.jsx'
 import { supabase } from '../lib/supabase.js'
 import { CATEGORIES } from '../lib/data.js'
