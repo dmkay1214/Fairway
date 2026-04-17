@@ -19,7 +19,6 @@ export default function AdminDashboard() {
   const [requests, setRequests] = useState([])
   const [bids, setBids] = useState([])
   const [orders, setOrders] = useState([])
-  const [feedback, setFeedback] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -34,14 +33,12 @@ export default function AdminDashboard() {
         supabase.from('requests').select('*, buyer:profiles(org_name)').order('created_at', { ascending: false }),
         supabase.from('bids').select('*, vendor:profiles(org_name, full_name)').order('created_at', { ascending: false }),
         supabase.from('orders').select('*, bid:bids(amount)').order('created_at', { ascending: false }),
-        supabase.from('platform_feedback').select('*, user:profiles(org_name, full_name, role)').order('created_at', { ascending: false }).limit(20),
       ])
 
       setUsers(profiles || [])
       setRequests(reqs || [])
       setBids(bidsData || [])
       setOrders(ordersData || [])
-      setFeedback(feedbackData || [])
 
       const buyers = (profiles || []).filter(p => p.role === 'buyer').length
       const vendors = (profiles || []).filter(p => p.role === 'seller').length
@@ -115,29 +112,6 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
-
-      {/* Platform feedback */}
-      {feedback.length > 0 && (
-        <div style={{ background: 'white', borderRadius: 12, border: '1px solid var(--slate-100)', overflow: 'hidden', marginBottom: 24 }}>
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--slate-50)', fontSize: 13, fontWeight: 700 }}>Platform Feedback ({feedback.length})</div>
-          <div>
-            {feedback.map(f => (
-              <div key={f.id} style={{ padding: '12px 20px', borderBottom: '1px solid var(--slate-50)', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4 }}>
-                    <span style={{ fontSize: 12, fontWeight: 600 }}>{f.user?.org_name || f.user?.full_name || 'Unknown'}</span>
-                    <span style={{ fontSize: 11, padding: '2px 7px', borderRadius: 20, background: f.user?.role === 'buyer' ? 'var(--green-50)' : 'var(--blue-100)', color: f.user?.role === 'buyer' ? 'var(--green-700)' : 'var(--blue-500)' }}>{f.user?.role}</span>
-                    <span style={{ fontSize: 12, color: '#f59e0b' }}>{'★'.repeat(f.rating)}</span>
-                  </div>
-                  {f.category && <div style={{ fontSize: 11, color: 'var(--slate-400)', marginBottom: 4 }}>{f.category.replace(/_/g, ' ')}</div>}
-                  <div style={{ fontSize: 12, color: 'var(--slate-600)' }}>{f.message}</div>
-                </div>
-                <div style={{ fontSize: 11, color: 'var(--slate-300)', flexShrink: 0 }}>{new Date(f.created_at).toLocaleDateString()}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Recent bids */}
       <div style={{ background: 'white', borderRadius: 12, border: '1px solid var(--slate-100)', overflow: 'hidden' }}>
