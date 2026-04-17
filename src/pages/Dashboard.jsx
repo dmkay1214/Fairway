@@ -74,6 +74,7 @@ export default function Dashboard({ onNewRequest }) {
           )
         })}
       </Card>
+      <ActivityFeed role="buyer" />
     </div>
   )
 }
