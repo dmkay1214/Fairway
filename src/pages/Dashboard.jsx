@@ -50,9 +50,15 @@ export default function Dashboard({ onNewRequest }) {
         actions={<Btn variant="primary" onClick={onNewRequest}>+ Post Request</Btn>}
       />
       <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14,marginBottom:24}}>
-        <MetricCard label="Active requests" value={active.length} sub={active.length > 0 ? 'Receiving bids' : 'Post a request to start'} />
-        <MetricCard label="Total requests" value={requests.length} sub="All time" subColor="var(--slate-400)" />
-        <MetricCard label="Platform" value="Fairway" sub="Golf procurement marketplace" subColor="var(--slate-400)" />
+        <div onClick={() => navigate('/requests')} style={{cursor:'pointer'}}>
+          <MetricCard label="Active requests" value={active.length} sub={active.length > 0 ? 'Receiving bids' : 'Post a request to start'} />
+        </div>
+        <div onClick={() => navigate('/requests')} style={{cursor:'pointer'}}>
+          <MetricCard label="Total requests" value={requests.length} sub="All time" subColor="var(--slate-400)" />
+        </div>
+        <div onClick={() => navigate('/orders')} style={{cursor:'pointer'}}>
+          <MetricCard label="Total savings" value={'$' + Number(orders.reduce((s,o) => { const sv=(o.request?.budget||0)-(o.bid?.amount||0); return s+(sv>0?sv:0) }, 0)).toLocaleString()} sub="vs budgets" subColor="var(--green-600)" />
+        </div>
       </div>
       <Card>
         <div style={{padding:'16px 20px',borderBottom:'1px solid var(--slate-50)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
