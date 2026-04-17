@@ -18,7 +18,17 @@ export function SellerOpportunities() {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      const { data: reqs } = await supabase.from('requests').select('*, buyer:profiles(org_name, location), bids(count)').eq('status', 'bidding').order('close_date', { ascending: true })
+      const { data: profile } = await supabase.from('profiles').select('categories').eq('id', user.id).single()
+      const vendorCategories = profile?.categories || []
+      
+      let reqQuery = supabase.from('requests').select('*, buyer:profiles(org_name, location), bids(count)').eq('status', 'bidding').order('close_date', { ascending: true })
+      
+      // Filter by vendor categories if they have any set
+      if (vendorCategories.length > 0) {
+        reqQuery = reqQuery.in('category', vendorCategories)
+      }
+      
+      const { data: reqs } = await reqQuery
       setRequests(reqs || [])
       const { data: bids } = await supabase.from('bids').select('request_id').eq('vendor_id', user.id)
       setMyBids((bids || []).map(b => b.request_id))
