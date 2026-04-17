@@ -11,6 +11,7 @@ import Requests from './pages/Requests.jsx'
 import Bids from './pages/Bids.jsx'
 import { Orders, Savings, Vendors } from './pages/BuyerPages.jsx'
 import { SellerOpportunities, SellerProfile } from './pages/SellerPages.jsx'
+import MyBids from './pages/MyBids.jsx'
 import SellerDashboard from './pages/SellerDashboard.jsx'
 import SubmitBid from './pages/SubmitBid.jsx'
 import Settings from './pages/Settings.jsx'
@@ -49,7 +50,7 @@ function AppShell({ role, user, onSignOut }) {
             <Route path="/pricing" element={<Pricing role={role} userId={user?.id} userEmail={user?.email} />} />
             <Route path="/seller/dashboard" element={<SellerDashboard />} />
             <Route path="/seller" element={<SellerOpportunities />} />
-            <Route path="/seller/bids" element={<SellerOpportunities />} />
+            <Route path="/seller/bids" element={<MyBids />} />
             <Route path="/seller/orders" element={<Orders />} />
             <Route path="/seller/profile" element={<SellerProfile />} />
             <Route path="/seller/bid/:id" element={<SubmitBid />} />
