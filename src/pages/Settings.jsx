@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Card, PageHeader, Btn } from '../components/UI.jsx'
 import { PlatformFeedback } from '../components/Feedback.jsx'
 import { supabase } from '../lib/supabase.js'
+import { CATEGORIES } from '../lib/data.js'
 
 function StripeConnect() {
   const [connected, setConnected] = useState(false)
@@ -158,6 +159,20 @@ export default function Settings({ role }) {
               <option value={500}>500 miles (regional)</option>
               <option value={9999}>Nationwide</option>
             </select>
+          </div>
+          <div style={{ marginBottom: 16 }}>
+            <label style={labelStyle}>Categories you supply (select all that apply)</label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
+              {CATEGORIES.map(cat => {
+                const sel = form.categories.includes(cat.id)
+                return (
+                  <button key={cat.id} type="button" onClick={() => set('categories', sel ? form.categories.filter(x => x !== cat.id) : [...form.categories, cat.id])}
+                    style={{ padding: '6px 12px', borderRadius: 20, border: '1px solid', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-body)', borderColor: sel ? 'var(--green-500)' : 'var(--slate-200)', background: sel ? 'var(--green-50)' : 'white', color: sel ? 'var(--green-700)' : 'var(--slate-600)' }}>
+                    {cat.icon} {cat.label}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </>)}
         <Btn variant="primary" onClick={handleSave} disabled={saving}>
