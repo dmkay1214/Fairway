@@ -36,7 +36,7 @@ export default function Requests({ onNewRequest }) {
         const bidCount = req.bids?.[0]?.count || 0
         const cat = CATEGORIES.find(c => c.id === req.category)
         return (
-          <Card key={req.id} style={{marginBottom:12,padding:'18px 20px',cursor:'pointer'}} onClick={() => navigate('/bids?req=' + req.id)}>
+          <div key={req.id} style={{marginBottom:12,padding:'18px 20px',cursor:'pointer',background:'white',borderRadius:12,border:'1px solid var(--slate-100)',boxShadow:'var(--shadow-sm)'}} onClick={() => navigate('/requests/' + req.id)}>
             <div style={{display:'flex',gap:14,alignItems:'flex-start'}}>
               <div style={{width:44,height:44,borderRadius:10,flexShrink:0,background:(cat?.color||'#888')+'18',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20}}>{cat?.icon||'📦'}</div>
               <div style={{flex:1}}>
@@ -50,7 +50,7 @@ export default function Requests({ onNewRequest }) {
                 <Badge variant={bidCount>0?'info':'default'}>{bidCount} bid{bidCount!==1?'s':''}</Badge>
               </div>
             </div>
-          </Card>
+          </div>
         )
       })}
     </div>
