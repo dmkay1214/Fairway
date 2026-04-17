@@ -18,7 +18,6 @@ const sellerNav = [
   { path: '/seller', label: 'Opportunities', icon: SearchIcon },
   { path: '/seller/bids', label: 'My Bids', icon: ChartIcon },
   { path: '/seller/orders', label: 'Active Orders', icon: BoxIcon },
-  { path: '/seller/profile', label: 'Profile & Ratings', icon: StarIcon },
 ]
 
 export default function Sidebar({ role, onRoleToggle }) {
