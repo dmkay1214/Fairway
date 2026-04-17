@@ -19,6 +19,7 @@ export default function AdminDashboard() {
   const [requests, setRequests] = useState([])
   const [bids, setBids] = useState([])
   const [orders, setOrders] = useState([])
+  const [feedback, setFeedback] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -47,6 +48,8 @@ export default function AdminDashboard() {
 
       setStats({ buyers, vendors, totalRequests: (reqs || []).length, totalBids: (bidsData || []).length, totalVolume, fairwayRevenue })
       setLoading(false)
+      // Load feedback separately
+      supabase.from('platform_feedback').select('*, user:profiles(org_name, full_name, role)').order('created_at', { ascending: false }).limit(20).then(({ data }) => setFeedback(data || []))
     }
     load()
   }, [])
@@ -112,6 +115,27 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Platform Feedback */}
+      {feedback.length > 0 && (
+        <div style={{ background: 'white', borderRadius: 12, border: '1px solid var(--slate-100)', overflow: 'hidden', marginBottom: 24 }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--slate-50)', fontSize: 13, fontWeight: 700 }}>Platform Feedback ({feedback.length})</div>
+          {feedback.map(f => (
+            <div key={f.id} style={{ padding: '12px 20px', borderBottom: '1px solid var(--slate-50)', display: 'flex', gap: 12 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 600 }}>{f.user?.org_name || f.user?.full_name || 'Unknown'}</span>
+                  <span style={{ fontSize: 11, padding: '2px 7px', borderRadius: 20, background: f.user?.role === 'buyer' ? 'var(--green-50)' : 'var(--blue-100)', color: f.user?.role === 'buyer' ? 'var(--green-700)' : 'var(--blue-500)' }}>{f.user?.role}</span>
+                  <span style={{ color: '#f59e0b', fontSize: 12 }}>{'★'.repeat(f.rating || 0)}</span>
+                </div>
+                {f.category && <div style={{ fontSize: 11, color: 'var(--slate-400)', marginBottom: 4 }}>{f.category.replace(/_/g,' ')}</div>}
+                <div style={{ fontSize: 12, color: 'var(--slate-600)' }}>{f.message}</div>
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--slate-300)', flexShrink: 0 }}>{new Date(f.created_at).toLocaleDateString()}</div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Recent bids */}
       <div style={{ background: 'white', borderRadius: 12, border: '1px solid var(--slate-100)', overflow: 'hidden' }}>
