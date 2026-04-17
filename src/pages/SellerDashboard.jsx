@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase.js'
 const STATUS_FLOW = { processing: 'confirmed', confirmed: 'scheduled', scheduled: 'delivered' }
 const STATUS_LABELS = { processing: 'Confirm order', confirmed: 'Mark scheduled', scheduled: 'Mark delivered', delivered: null }
 import VendorOnboarding from '../components/VendorOnboarding.jsx'
+import ActivityFeed from '../components/ActivityFeed.jsx'
 import { CATEGORIES } from '../lib/data.js'
 
 const fmt = n => '$' + Number(n || 0).toLocaleString()
@@ -49,6 +50,7 @@ export default function SellerDashboard() {
   return (
     <div className="fade-in">
       <VendorOnboarding />
+      <ActivityFeed role="seller" />
       <PageHeader title={`${greeting}, ${name}`} subtitle={`${orgName} · Vendor Portal`} actions={<Btn variant="primary" onClick={() => navigate('/seller')}>Browse opportunities →</Btn>} />
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:24}}>
         <MetricCard label="Open opportunities" value={opportunities.length} sub="Accepting bids" subColor="var(--blue-500)" />

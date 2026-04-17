@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, Badge, Btn, PageHeader, EmptyState, MetricCard } from '../components/UI.jsx'
 import { supabase } from '../lib/supabase.js'
+import ActivityFeed from '../components/ActivityFeed.jsx'
 
 const fmtMoney = n => '$' + Number(n || 0).toLocaleString()
 
