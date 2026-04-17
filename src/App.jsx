@@ -16,6 +16,7 @@ import SubmitBid from './pages/SubmitBid.jsx'
 import Settings from './pages/Settings.jsx'
 import Pricing from './pages/Pricing.jsx'
 import OrderDetail from './pages/OrderDetail.jsx'
+import RequestDetail from './pages/RequestDetail.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
 
 function LoadingScreen() {
@@ -53,6 +54,7 @@ function AppShell({ role, user, onSignOut }) {
             <Route path="/seller/profile" element={<SellerProfile />} />
             <Route path="/seller/bid/:id" element={<SubmitBid />} />
             <Route path="/orders/:id" element={<OrderDetail role={role} />} />
+            <Route path="/requests/:id" element={<RequestDetail />} />
             <Route path="/seller/orders/:id" element={<OrderDetail role={role} />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<Navigate to={role === 'buyer' ? '/dashboard' : '/seller/dashboard'} replace />} />
