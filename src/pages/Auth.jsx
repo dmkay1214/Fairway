@@ -193,7 +193,7 @@ export function SignUp({ onSignUp, onLogin, initialRole = 'buyer' }) {
           <Field label="Location (City, State)" value={form.location} onChange={e => set('location', e.target.value)} placeholder="Naples, FL" required />
           {roleTab === 'seller' && (
             <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 12, fontWeight: 500, color: '#aaa', display: 'block', marginBottom: 8 }}>Categories you supply</label>
+              <label style={{ fontSize: 12, fontWeight: 500, color: '#aaa', display: 'block', marginBottom: 8 }}>Categories you supply (select all that apply)</label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
                 {CATS.map(c => {
                   const sel = form.categories.includes(c)
