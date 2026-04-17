@@ -15,6 +15,7 @@ export default function SellerDashboard() {
   const [profile, setProfile] = useState(null)
   const [opportunities, setOpportunities] = useState([])
   const [myBids, setMyBids] = useState([])
+  const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -97,6 +98,27 @@ export default function SellerDashboard() {
           })}
         </Card>
       </div>
+      {reviews.length > 0 && (
+        <div style={{ background: 'white', borderRadius: 14, border: '1px solid var(--slate-100)', overflow: 'hidden', marginBottom: 20 }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--slate-50)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ fontSize: 13, fontWeight: 700 }}>Reviews from clubs</div>
+            <div style={{ fontSize: 13, color: '#f59e0b' }}>
+              {'★'.repeat(Math.round(reviews.reduce((s,r) => s + r.rating, 0) / reviews.length))}
+              <span style={{ fontSize: 12, color: 'var(--slate-400)', marginLeft: 6 }}>{(reviews.reduce((s,r) => s + r.rating, 0) / reviews.length).toFixed(1)} avg</span>
+            </div>
+          </div>
+          {reviews.map(r => (
+            <div key={r.id} style={{ padding: '12px 20px', borderBottom: '1px solid var(--slate-50)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ fontSize: 12, fontWeight: 600 }}>{r.reviewer?.org_name || r.reviewer?.full_name || 'Anonymous'}</span>
+                <span style={{ fontSize: 12, color: '#f59e0b' }}>{'★'.repeat(r.rating)}</span>
+              </div>
+              {r.comment && <div style={{ fontSize: 12, color: 'var(--slate-600)' }}>{r.comment}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+
       {(!profile?.categories?.length || !profile?.org_name) && (
         <Card style={{marginTop:20,padding:'16px 20px',background:'#fffbeb',border:'1px solid #fde68a'}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
