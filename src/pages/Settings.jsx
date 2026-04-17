@@ -95,7 +95,7 @@ export default function Settings({ role }) {
         <PlatformFeedback role={role} />
       </Section>
 
-      <Section title="Danger zone">
+      <Section title="Account">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 2 }}>Sign out</div>
