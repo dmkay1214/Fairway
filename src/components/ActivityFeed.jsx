@@ -79,13 +79,13 @@ export default function ActivityFeed({ role }) {
 
   return (
     <div style={{ background: 'white', borderRadius: 14, border: '1px solid var(--slate-100)', overflow: 'hidden', marginBottom: 20 }}>
-      <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--slate-50)', fontSize: 13, fontWeight: 700 }}>Recent activity</div>
+      <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--slate-50)', fontSize: 12, fontWeight: 700 }}>Recent activity</div>
       {activities.map(a => (
         <div key={a.id} style={{ display: 'flex', gap: 12, padding: '12px 20px', borderBottom: '1px solid var(--slate-50)', alignItems: 'flex-start' }}>
-          <div style={{ width: 32, height: 32, borderRadius: '50%', background: a.color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 }}>{a.icon}</div>
+          <div style={{ width: 26, height: 26, borderRadius: '50%', background: a.color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, flexShrink: 0 }}>{a.icon}</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 13, color: 'var(--slate-700)', lineHeight: 1.4 }}>{a.text}</div>
-            <div style={{ fontSize: 11, color: 'var(--slate-400)', marginTop: 3 }}>{timeAgo(a.time)}</div>
+            <div style={{ fontSize: 12, color: 'var(--slate-700)', lineHeight: 1.4 }}>{a.text}</div>
+            <div style={{ fontSize: 10, color: 'var(--slate-400)', marginTop: 1 }}>{timeAgo(a.time)}</div>
           </div>
         </div>
       ))}

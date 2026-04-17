@@ -50,14 +50,14 @@ export default function SellerDashboard() {
   return (
     <div className="fade-in">
       <VendorOnboarding />
-      <ActivityFeed role="seller" />
       <PageHeader title={`${greeting}, ${name}`} subtitle={`${orgName} · Vendor Portal`} actions={<Btn variant="primary" onClick={() => navigate('/seller')}>Browse opportunities →</Btn>} />
-      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:24}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:16}}>
         <MetricCard label="Open opportunities" value={opportunities.length} sub="Accepting bids" subColor="var(--blue-500)" />
         <MetricCard label="Bids submitted" value={myBids.length} sub="All time" subColor="var(--slate-400)" />
         <MetricCard label="Contracts won" value={wonBids.length} sub="Awarded bids" subColor="var(--green-600)" />
         <MetricCard label="Total revenue" value={fmt(totalRevenue)} sub="From won contracts" subColor="var(--slate-400)" />
       </div>
+      <ActivityFeed role="seller" />
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
         <Card>
           <div style={{padding:'16px 20px',borderBottom:'1px solid var(--slate-50)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
