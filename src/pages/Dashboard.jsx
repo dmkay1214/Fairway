@@ -30,6 +30,8 @@ export default function Dashboard({ onNewRequest }) {
       setProfile(prof)
       const { data: reqs } = await supabase.from('requests').select('*, bids(count)').eq('buyer_id', user.id).order('created_at', { ascending: false }).limit(5)
       setRequests(reqs || [])
+      const { data: ords } = await supabase.from('orders').select('*, request:requests(budget,buyer_id), bid:bids(amount)').order('created_at', { ascending: false })
+      setOrders((ords||[]).filter(o => o.request?.buyer_id === user.id))
       setLoading(false)
     }
     load()
