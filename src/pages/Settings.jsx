@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Card, PageHeader, Btn } from '../components/UI.jsx'
+import { PlatformFeedback } from '../components/Feedback.jsx'
 import { supabase } from '../lib/supabase.js'
 
 function Section({ title, children }) {
@@ -89,6 +90,10 @@ export default function Settings({ role }) {
       </Section>
 
       
+
+      <Section title="Share feedback">
+        <PlatformFeedback role={role} />
+      </Section>
 
       <Section title="Danger zone">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

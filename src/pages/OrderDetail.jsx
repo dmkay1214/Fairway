@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { Card, Btn, Badge } from '../components/UI.jsx'
+import { TransactionReview, PlatformFeedback } from '../components/Feedback.jsx'
 
 const fmt = n => '$' + Number(n || 0).toLocaleString()
 
@@ -123,6 +124,16 @@ export default function OrderDetail({ role }) {
       )}
 
       {/* Vendor status update */}
+      {order.status === 'delivered' && (
+        <div style={{ marginBottom: 16 }}>
+          <TransactionReview
+            orderId={order.id}
+            revieweeId={role === 'buyer' ? order.bid?.vendor_id : order.request?.buyer_id}
+            role={role}
+          />
+        </div>
+      )}
+
       {role === 'seller' && order.status !== 'delivered' && NEXT_STATUS[order.status] && (
         <Card style={{ padding: '18px 20px', background: 'var(--green-50)', border: '1px solid var(--green-100)' }}>
           <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Update order status</div>
