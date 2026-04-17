@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import NotificationBell from './Notifications.jsx'
 
 export default function TopBar({ role, onNewRequest, onAdmin, userName, orgName }) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
 
   return (
@@ -89,10 +91,10 @@ export default function TopBar({ role, onNewRequest, onAdmin, userName, orgName 
                 <div style={{ fontSize: 11, color: 'var(--slate-400)' }}>{orgName}</div>
               </div>
               {[
-                { label: '⚙️  Account settings', action: () => {} },
-                { label: '💳  Billing', action: () => {} },
+                { label: '⚙️  Account settings', action: () => navigate('/settings') },
+                { label: '💳  Billing', action: () => navigate('/settings') },
                 onAdmin && { label: '🛡️  Admin panel', action: onAdmin },
-                { label: '📖  Help & docs', action: () => {} },
+                { label: '📖  Help & docs', action: () => window.open('mailto:support@fairwayprocurement.com') },
               ].filter(Boolean).map((item, i) => (
                 <button key={i} onClick={() => { item.action(); setUserMenuOpen(false) }} style={{
                   display: 'block', width: '100%', padding: '8px 12px',
