@@ -148,7 +148,7 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
         borderRadius: 16, overflow: 'hidden',
       }}>
         {[
-          { value: '5%', label: 'Platform fee — nothing else' },
+          { value: '$84K+', label: 'Avg annual savings per club' },
           { value: '18-35%', label: 'Average savings vs current vendors' },
           { value: '48hrs', label: 'Average time to first bid' },
         ].map((s, i) => (
