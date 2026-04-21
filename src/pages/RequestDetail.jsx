@@ -93,6 +93,13 @@ export default function RequestDetail() {
         </div>
       </Card>
 
+      {request.notes && (
+        <Card style={{ padding: '16px 20px', marginBottom: 16, background: 'var(--slate-50)', border: '1px solid var(--slate-100)' }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--slate-500)', marginBottom: 6 }}>Additional notes from buyer</div>
+          <div style={{ fontSize: 13, color: 'var(--slate-700)', lineHeight: 1.6 }}>{request.notes}</div>
+        </Card>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <div style={{ fontSize: 15, fontWeight: 700 }}>
           {bids.length === 0 ? 'No bids yet' : bids.length + ' bid' + (bids.length > 1 ? 's' : '') + ' received'}
