@@ -47,7 +47,8 @@ export default function VendorProfile() {
           <div style={{ width: 60, height: 60, borderRadius: 14, background: 'var(--green-100)', color: 'var(--green-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 700, flexShrink: 0 }}>{initials}</div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{vendor.org_name || vendor.full_name}</div>
-            <div style={{ fontSize: 13, color: 'var(--slate-400)', marginBottom: 8 }}>{vendor.location}</div>
+            <div style={{ fontSize: 13, color: 'var(--slate-400)', marginBottom: 4 }}>{vendor.location}</div>
+            {vendor.website && <div style={{ marginBottom: 8 }}><a href={vendor.website} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: 'var(--green-600)', textDecoration: 'none' }}>🌐 {vendor.website.replace('https://','').replace('http://','')}</a></div>}
             {reviews.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <StarRating value={Math.round(avgRating)} />

@@ -66,7 +66,7 @@ const labelStyle = { fontSize: 12, fontWeight: 500, color: 'var(--slate-500)', d
 export default function Settings({ role }) {
   const [profile, setProfile] = useState(null)
   const [user, setUser] = useState(null)
-  const [form, setForm] = useState({ full_name: '', org_name: '', location: '', phone: '', contact_email: '', service_radius: 100, categories: [] })
+  const [form, setForm] = useState({ full_name: '', org_name: '', location: '', phone: '', contact_email: '', service_radius: 100, categories: [], website: '' })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [membership, setMembership] = useState(null)
@@ -85,6 +85,7 @@ export default function Settings({ role }) {
         location: prof?.location || user.user_metadata?.location || '',
         phone: prof?.phone || '',
         contact_email: prof?.contact_email || '',
+        website: prof?.website || '',
         service_radius: prof?.service_radius || 100,
         categories: prof?.categories || [],
       })
@@ -102,6 +103,7 @@ export default function Settings({ role }) {
       location: form.location,
       phone: form.phone,
       contact_email: form.contact_email,
+      website: form.website,
       service_radius: form.service_radius,
       categories: form.categories,
     }).eq('id', user.id)
@@ -147,6 +149,10 @@ export default function Settings({ role }) {
             <div>
               <label style={labelStyle}>Contact email</label>
               <input value={form.contact_email} onChange={e => set('contact_email', e.target.value)} style={inputStyle} placeholder="contact@yourcompany.com" />
+          </div>
+          <div>
+            <label style={labelStyle}>Website</label>
+            <input value={form.website} onChange={e => set('website', e.target.value)} style={inputStyle} placeholder="https://yourcompany.com" />
             </div>
           </div>
           <div style={{ marginBottom: 16 }}>
