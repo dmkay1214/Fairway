@@ -168,9 +168,9 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
         maxWidth: 900, margin: '0 auto', padding: '0 48px 80px',
       }}>
         {[
-          { icon: '⛱', title: 'Post any need', desc: 'Sand, machinery, labor, chemicals — post in 60 seconds and vendors compete for your business.' },
+          { icon: '📋', title: 'Post any need', desc: 'Sand, machinery, labor, chemicals — post in 60 seconds and vendors compete for your business.' },
           { icon: '💰', title: 'Transparent pricing', desc: 'Every bid shows exact savings vs your budget. No hidden fees, no relationship markup.' },
-          { icon: '✓', title: '', desc: 'Every vendor is vetted, insured, and rated by other clubs. Quality you can trust at prices that save.' },
+          { icon: '⭐', title: 'Verified vendors', desc: 'Every vendor is rated by other clubs. Quality you can trust at prices that save.' },
         ].map((f, i) => (
           <div key={i} style={{
             background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)',
