@@ -13,6 +13,7 @@ export default function RequestDetail() {
   const [bids, setBids] = useState([])
   const [loading, setLoading] = useState(true)
   const [awarding, setAwarding] = useState(null)
+  const [view, setView] = useState('cards')
 
   useEffect(() => {
     async function load() {
@@ -79,9 +80,67 @@ export default function RequestDetail() {
         </div>
       </Card>
 
-      <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <div style={{ fontSize: 15, fontWeight: 700 }}>
+          {bids.length === 0 ? 'No bids yet' : bids.length + ' bid' + (bids.length > 1 ? 's' : '') + ' received'}
+        </div>
+        {bids.length > 1 && (
+          <div style={{ display: 'flex', gap: 4, background: 'var(--slate-100)', borderRadius: 8, padding: 4 }}>
+            <button onClick={() => setView('cards')} style={{ padding: '5px 12px', borderRadius: 6, border: 'none', background: view === 'cards' ? 'white' : 'transparent', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>Cards</button>
+            <button onClick={() => setView('compare')} style={{ padding: '5px 12px', borderRadius: 6, border: 'none', background: view === 'compare' ? 'white' : 'transparent', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>Compare</button>
+          </div>
+        )}
+      </div>
+
+      <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 12, display: 'none' }}>
         {bids.length === 0 ? 'No bids yet' : bids.length + ' bid' + (bids.length > 1 ? 's' : '') + ' received'}
       </div>
+
+      {view === 'compare' && bids.length > 0 && (
+        <div style={{ overflowX: 'auto', marginBottom: 20 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ background: 'var(--slate-50)' }}>
+                <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--slate-500)', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>Vendor</th>
+                <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 600, color: 'var(--slate-500)', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>Bid Amount</th>
+                <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 600, color: 'var(--slate-500)', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>Savings</th>
+                <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 600, color: 'var(--slate-500)', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>Delivery</th>
+                <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: 'var(--slate-500)', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>Location</th>
+                <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 600, color: 'var(--slate-500)', fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bids.map((bid, i) => {
+                const isLowest = bid.amount === lowestBid
+                const savings = request.budget - bid.amount
+                const isAwarded = bid.status === 'awarded'
+                return (
+                  <tr key={bid.id} style={{ borderBottom: '1px solid var(--slate-100)', background: isLowest ? 'var(--green-50)' : 'white' }}>
+                    <td style={{ padding: '12px 16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span onClick={() => navigate('/vendor/'+bid.vendor_id)} style={{ fontWeight: 600, cursor: 'pointer', color: 'var(--green-700)', textDecoration: 'underline' }}>{bid.vendor?.org_name || 'Vendor'}</span>
+                        {isLowest && <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--green-100)', color: 'var(--green-700)', borderRadius: 10, fontWeight: 600 }}>LOWEST</span>}
+                      </div>
+                    </td>
+                    <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, fontSize: 15 }}>{fmt(bid.amount)}</td>
+                    <td style={{ padding: '12px 16px', textAlign: 'right', color: savings > 0 ? 'var(--green-600)' : 'var(--slate-400)', fontWeight: 500 }}>{savings > 0 ? fmt(savings) : '—'}</td>
+                    <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--slate-500)' }}>{bid.delivery_days ? bid.delivery_days + ' days' : '—'}</td>
+                    <td style={{ padding: '12px 16px', color: 'var(--slate-500)' }}>{bid.vendor?.location || '—'}</td>
+                    <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                      {!isAwarded && request.status === 'bidding' && (
+                        <Btn variant={isLowest ? 'primary' : 'default'} size="sm" disabled={awarding === bid.id} onClick={() => handleAward(bid)}>
+                          {awarding === bid.id ? '...' : 'Award'}
+                        </Btn>
+                      )}
+                      {isAwarded && <span style={{ fontSize: 12, color: 'var(--green-600)', fontWeight: 600 }}>✓ Awarded</span>}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {bids.length === 0 ? (
         <Card style={{ padding: '40px 24px', textAlign: 'center' }}>
