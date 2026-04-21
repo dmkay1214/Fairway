@@ -38,6 +38,17 @@ export default function SubmitBid() {
         status: 'pending'
       }).select().single()
       if (err) throw new Error(err.message)
+      // Create in-app notification for buyer
+      const { data: reqData } = await supabase.from('requests').select('buyer_id, title').eq('id', id).single()
+      if (reqData?.buyer_id) {
+        await supabase.from('notifications').insert({
+          user_id: reqData.buyer_id,
+          type: 'new_bid',
+          title: 'New bid received',
+          message: 'A vendor submitted a bid on: ' + reqData.title,
+          read: false
+        })
+      }
       await supabase.functions.invoke('send-email', {
         body: { type: 'new_bid', bidId: newBid.id, requestId: id }
       })
