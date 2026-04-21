@@ -117,11 +117,11 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
           fontFamily: 'var(--font-display)', fontSize: 58, color: 'white',
           lineHeight: 1.1, marginBottom: 20,
         }}>
-          Cut your course costs<br />
-          <span style={{ color: 'var(--green-400)', fontStyle: 'italic' }}>by 18–35%</span>
+          The smarter way to procure<br />
+          <span style={{ color: 'var(--green-400)', fontStyle: 'italic' }}>for golf courses</span>
         </h1>
         <p style={{ fontSize: 17, color: 'rgba(255,255,255,.5)', lineHeight: 1.7, maxWidth: 580, margin: '0 auto 36px' }}>
-          Fairway is the procurement marketplace where golf courses and country clubs source sand, machinery, labor, and supplies — at prices your current vendors can't match.
+          Post what you need. Get competing bids from verified vendors. Award the best deal — and save 18–35% on sand, equipment, labor, and more. Built exclusively for golf courses and country clubs.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <button onClick={() => { window.__signupRole='buyer'; onSignUp('buyer') }} style={{
@@ -129,14 +129,14 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
             background: 'var(--green-500)', color: 'white', fontSize: 15, fontWeight: 600,
             cursor: 'pointer', fontFamily: 'var(--font-body)',
           }}>
-            Enter as Buyer (Club) →
+            I'm a Golf Club →
           </button>
           <button onClick={() => { window.__signupRole='seller'; onSignUp('seller') }} style={{
             padding: '14px 32px', borderRadius: 10,
             border: '1px solid rgba(255,255,255,.2)', background: 'transparent',
             color: 'white', fontSize: 15, cursor: 'pointer', fontFamily: 'var(--font-body)',
           }}>
-            Enter as Vendor →
+            I'm a Vendor →
           </button>
         </div>
       </div>
@@ -148,10 +148,9 @@ export default function Landing({ onEnter, onLogin, onSignUp }) {
         borderRadius: 16, overflow: 'hidden',
       }}>
         {[
-          { value: '$84K+', label: 'Avg annual savings per club' },
-          
-          { value: '18.4%', label: 'Average discount rate' },
-          { value: '4.8', label: 'Avg bids per request' },
+          { value: '5%', label: 'Platform fee — nothing else' },
+          { value: '18-35%', label: 'Average savings vs current vendors' },
+          { value: '48hrs', label: 'Average time to first bid' },
         ].map((s, i) => (
           <div key={i} style={{
             flex: 1, padding: '24px 20px', textAlign: 'center',
