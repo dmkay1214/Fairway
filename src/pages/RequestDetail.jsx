@@ -17,7 +17,7 @@ export default function RequestDetail() {
   useEffect(() => {
     async function load() {
       const { data: req } = await supabase.from('requests').select('*').eq('id', id).single()
-      const { data: bidsData } = await supabase.from('bids').select('*, vendor:profiles(org_name, full_name, location, categories)').eq('request_id', id).order('amount', { ascending: true })
+      const { data: bidsData } = await supabase.from('bids').select('*, vendor_id, vendor:profiles(org_name, full_name, location, categories)').eq('request_id', id).order('amount', { ascending: true })
       setRequest(req)
       setBids(bidsData || [])
       setLoading(false)
