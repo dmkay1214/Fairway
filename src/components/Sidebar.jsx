@@ -5,7 +5,6 @@ import { supabase } from '../lib/supabase.js'
 const buyerNav = [
   { path: '/dashboard', label: 'Dashboard', icon: GridIcon },
   { path: '/requests', label: 'My Requests', icon: ListIcon },
-  { path: '/bids', label: 'Live Bids', icon: ChartIcon },
   { path: '/orders', label: 'Orders', icon: BoxIcon },
   { path: '/savings', label: 'Savings Report', icon: TrendIcon },
   { path: '/vendors', label: 'Vendor Directory', icon: UsersIcon },
