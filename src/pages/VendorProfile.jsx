@@ -44,7 +44,7 @@ export default function VendorProfile() {
 
       <Card style={{ padding: '24px', marginBottom: 16 }}>
         <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-          <div style={{ width: 60, height: 60, borderRadius: 14, background: 'var(--green-100)', color: 'var(--green-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 700, flexShrink: 0 }}>{initials}</div>
+          <div style={{ width: 60, height: 60, borderRadius: 14, background: 'var(--green-100)', color: 'var(--green-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 700, flexShrink: 0, overflow: 'hidden' }}>{vendor.logo_url ? <img src={vendor.logo_url} alt='logo' style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials}</div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{vendor.org_name || vendor.full_name}</div>
             <div style={{ fontSize: 13, color: 'var(--slate-400)', marginBottom: 4 }}>{vendor.location}</div>

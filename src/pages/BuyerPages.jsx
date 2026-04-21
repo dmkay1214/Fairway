@@ -158,12 +158,13 @@ export function Vendors() {
       : <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:14}}>
           {shown.map(v=>{
             const initials=(v.org_name||v.full_name||'V').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()
-            return <Card key={v.id} style={{padding:'18px 20px'}}>
+            return <Card key={v.id} style={{padding:'18px 20px',cursor:'pointer'}} onClick={() => navigate('/vendor/'+v.id)}>
               <div style={{display:'flex',gap:12,alignItems:'flex-start',marginBottom:12}}>
-                <div style={{width:44,height:44,borderRadius:'50%',background:'var(--green-100)',color:'var(--green-700)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:600,flexShrink:0}}>{initials}</div>
+                <div style={{width:44,height:44,borderRadius:'50%',background:'var(--green-100)',color:'var(--green-700)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:600,flexShrink:0,overflow:'hidden'}}>{v.logo_url ? <img src={v.logo_url} alt="logo" style={{width:'100%',height:'100%',objectFit:'cover'}} /> : initials}</div>
                 <div style={{flex:1}}>
                   <div style={{fontSize:14,fontWeight:600}}>{v.org_name||v.full_name}</div>
                   <div style={{fontSize:12,color:'var(--slate-400)',marginTop:2}}>{v.location}</div>
+                  {v.rating > 0 && <div style={{fontSize:12,color:'#f59e0b',marginTop:2}}>{'★'.repeat(Math.round(v.rating||0))} <span style={{color:'var(--slate-400)'}}>{Number(v.rating||0).toFixed(1)}</span></div>}
                 </div>
                 {v.verified && <Badge variant="success" size="sm">✓ Verified</Badge>}
               </div>

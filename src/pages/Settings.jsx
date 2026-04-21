@@ -68,6 +68,25 @@ export default function Settings({ role }) {
   const [user, setUser] = useState(null)
   const [form, setForm] = useState({ full_name: '', org_name: '', location: '', phone: '', contact_email: '', service_radius: 100, categories: [], website: '' })
   const [saving, setSaving] = useState(false)
+  const [logoUrl, setLogoUrl] = useState(null)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
+
+  async function handleLogoUpload(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    setUploadingLogo(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    const ext = file.name.split('.').pop()
+    const path = user.id + '/logo.' + ext
+    const { error } = await supabase.storage.from('logos').upload(path, file, { upsert: true })
+    if (!error) {
+      const { data } = supabase.storage.from('logos').getPublicUrl(path)
+      const url = data.publicUrl
+      await supabase.from('profiles').update({ logo_url: url }).eq('id', user.id)
+      setLogoUrl(url)
+    }
+    setUploadingLogo(false)
+  }
   const [saved, setSaved] = useState(false)
   const [membership, setMembership] = useState(null)
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
@@ -79,6 +98,7 @@ export default function Settings({ role }) {
       setUser(user)
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', user.id).single()
       setProfile(prof)
+      setLogoUrl(prof?.logo_url || null)
       setForm({
         full_name: prof?.full_name || user.user_metadata?.full_name || '',
         org_name: prof?.org_name || user.user_metadata?.org_name || '',
@@ -128,7 +148,20 @@ export default function Settings({ role }) {
             <input value={form.full_name} onChange={e => set('full_name', e.target.value)} style={inputStyle} placeholder="Your name" />
           </div>
           <div>
-            <label style={labelStyle}>{role === 'buyer' ? 'Club name' : 'Company name'}</label>
+            <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ width: 64, height: 64, borderRadius: 12, background: 'var(--green-100)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+            {logoUrl ? <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 24, color: 'var(--green-700)' }}>🏢</span>}
+          </div>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 6 }}>{role === 'buyer' ? 'Club logo' : 'Company logo'}</div>
+            <label style={{ padding: '6px 14px', background: 'white', border: '1px solid var(--slate-200)', borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+              {uploadingLogo ? 'Uploading...' : 'Upload logo'}
+              <input type="file" accept="image/*" onChange={handleLogoUpload} style={{ display: 'none' }} />
+            </label>
+            <div style={{ fontSize: 11, color: 'var(--slate-400)', marginTop: 4 }}>PNG, JPG up to 2MB</div>
+          </div>
+        </div>
+        <label style={labelStyle}>{role === 'buyer' ? 'Club name' : 'Company name'}</label>
             <input value={form.org_name} onChange={e => set('org_name', e.target.value)} style={inputStyle} placeholder={role === 'buyer' ? 'Pine Valley CC' : 'Gulf Shore Aggregates'} />
           </div>
           <div>
