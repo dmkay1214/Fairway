@@ -158,7 +158,7 @@ export function Vendors() {
       : <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:14}}>
           {shown.map(v=>{
             const initials=(v.org_name||v.full_name||'V').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()
-            return <Card key={v.id} style={{padding:'18px 20px',cursor:'pointer'}} onClick={() => navigate('/vendor/'+v.id)}>
+            return <div key={v.id} style={{padding:'18px 20px',cursor:'pointer',background:'white',borderRadius:12,border:'1px solid var(--slate-100)',boxShadow:'var(--shadow-sm)'}} onClick={() => navigate('/vendor/'+v.id)}>
               <div style={{display:'flex',gap:12,alignItems:'flex-start',marginBottom:12}}>
                 <div style={{width:44,height:44,borderRadius:'50%',background:'var(--green-100)',color:'var(--green-700)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:600,flexShrink:0,overflow:'hidden'}}>{v.logo_url ? <img src={v.logo_url} alt="logo" style={{width:'100%',height:'100%',objectFit:'cover'}} /> : initials}</div>
                 <div style={{flex:1}}>
@@ -169,7 +169,7 @@ export function Vendors() {
                 {v.verified && <Badge variant="success" size="sm">✓ Verified</Badge>}
               </div>
               {v.categories?.length>0 && <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>{v.categories.map(c=>{const cat=CATEGORIES.find(x=>x.id===c);return <Badge key={c} size="sm">{cat?.icon} {cat?.label||c}</Badge>})}</div>}
-            </Card>
+            </div>
           })}
         </div>}
     </div>
