@@ -26,6 +26,12 @@ export default function RequestDetail() {
     load()
   }, [id])
 
+  async function handleClose() {
+    if (!window.confirm('Are you sure you want to close this request? Vendors will no longer be able to submit bids.')) return
+    await supabase.from('requests').update({ status: 'closed' }).eq('id', id)
+    setRequest(r => ({ ...r, status: 'closed' }))
+  }
+
   async function handleAward(bid) {
     setAwarding(bid.id)
     try {
@@ -63,7 +69,12 @@ export default function RequestDetail() {
 
   return (
     <div className="fade-in" style={{ maxWidth: 700, margin: '0 auto' }}>
-      <button onClick={() => navigate('/requests')} style={{ background: 'none', border: 'none', color: 'var(--slate-400)', cursor: 'pointer', fontSize: 13, marginBottom: 20, padding: 0 }}>Back to requests</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <button onClick={() => navigate('/requests')} style={{ background: 'none', border: 'none', color: 'var(--slate-400)', cursor: 'pointer', fontSize: 13, padding: 0 }}>← Back to requests</button>
+        {request.status === 'bidding' && (
+          <button onClick={handleClose} style={{ padding: '6px 14px', background: 'none', border: '1px solid #fca5a5', color: '#dc2626', borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-body)' }}>Close request</button>
+        )}
+      </div>
 
       <Card style={{ padding: '20px 24px', marginBottom: 20 }}>
         <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
