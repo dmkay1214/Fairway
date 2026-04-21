@@ -37,12 +37,14 @@ export default function RequestDetail() {
         await supabase.from('bids').update({ status: 'awarded' }).eq('id', bid.id)
         await supabase.from('requests').update({ status: 'awarded', awarded_bid_id: bid.id, awarded_amount: bid.amount }).eq('id', id)
         await supabase.from('orders').insert({ request_id: id, bid_id: bid.id, status: 'processing' })
+        await supabase.from('notifications').insert({ user_id: bid.vendor_id, type: 'bid_awarded', title: 'Your bid was awarded! 🏆', message: 'Congratulations! Your bid has been selected.', read: false })
         await supabase.functions.invoke('send-email', { body: { type: 'bid_awarded', bidId: bid.id, requestId: id } })
         window.location.href = data.url
       } else {
         await supabase.from('bids').update({ status: 'awarded' }).eq('id', bid.id)
         await supabase.from('requests').update({ status: 'awarded', awarded_bid_id: bid.id, awarded_amount: bid.amount }).eq('id', id)
         await supabase.from('orders').insert({ request_id: id, bid_id: bid.id, status: 'processing' })
+        await supabase.from('notifications').insert({ user_id: bid.vendor_id, type: 'bid_awarded', title: 'Your bid was awarded! 🏆', message: 'Congratulations! Your bid has been selected.', read: false })
         await supabase.functions.invoke('send-email', { body: { type: 'bid_awarded', bidId: bid.id, requestId: id } })
         alert('Bid awarded! Note: vendor has not connected their payment account yet.')
         navigate('/requests')
