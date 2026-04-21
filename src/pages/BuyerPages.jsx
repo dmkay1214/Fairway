@@ -125,6 +125,7 @@ export function Savings() {
 }
 
 export function Vendors() {
+  const navigate = useNavigate()
   const [vendors, setVendors] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
