@@ -100,7 +100,7 @@ export default function RequestDetail() {
               <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--green-100)', color: 'var(--green-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>{initials}</div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-                  <div style={{ fontSize: 14, fontWeight: 600 }}>{bid.vendor?.org_name || 'Vendor'}</div>
+                  <div onClick={() => navigate('/vendor/'+bid.vendor_id)} style={{ fontSize: 14, fontWeight: 600, cursor: 'pointer', color: 'var(--green-700)', textDecoration: 'underline' }}>{bid.vendor?.org_name || 'Vendor'}</div>
                   {isLowest && <Badge variant="success">Lowest bid</Badge>}
                   {isAwarded && <Badge variant="success">Awarded</Badge>}
                 </div>
