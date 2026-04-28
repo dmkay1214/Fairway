@@ -1,9 +1,9 @@
 // Central data store — replace with Supabase/API calls to go live
 
 export const CATEGORIES = [
-  { id: 'sand', label: 'Sand & Aggregates', icon: '⛱', color: '#c4943a' },
+  { id: 'sand', label: 'Sand & Aggregates', icon: '🏖', color: '#c4943a' },
   { id: 'machinery', label: 'Machinery', icon: '🚜', color: '#1f6feb' },
-  { id: 'labor', label: 'Labor', icon: '👷', color: '#8b5cf6' },
+  { id: 'labor', label: 'Labor & Staffing', icon: '👷', color: '#8b5cf6' },
   { id: 'chemicals', label: 'Chemicals & Fertilizer', icon: '🌿', color: '#219e62' },
   { id: 'irrigation', label: 'Irrigation', icon: '💧', color: '#0ea5e9' },
   { id: 'equipment', label: 'Equipment Purchase', icon: '🔧', color: '#f97316' },
